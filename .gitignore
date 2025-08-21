@@ -1,9 +1,17 @@
-HELP.md
+# Ignore log files and directories
+logs/
+*.log
+
+# Ignore upload directory for product images
+src/main/resources/static/images/
+
+# Ignore build artifacts
 target/
 .mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
+# Ignore IDE configuration files
 ### STS ###
 .apt_generated
 .classpath
@@ -31,3 +39,10 @@ build/
 
 ### VS Code ###
 .vscode/
+
+# Ignore other temporary files
+*.class
+*.jar
+*.war
+.env
+local.properties
