@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HammerX - Đăng Nhập</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">H</div>
+            </div>
+            <nav class="nav-links">
+                <a href="#">Trang chủ</a>
+                <a href="#">Lịch</a>
+                <a href="#">Đăng nhập</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">Đăng nhập</a>
+                <a href="#" class="btn btn-primary">Đăng ký</a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="hero">
+            <h1 class="title">Đăng Nhập</h1>
+            <p class="subtitle">Chào mừng trở lại, tham gia đấu giá ngay!</p>
+        </div>
+        <div class="action-container">
+            <form action="#" method="post">
+                <input type="text" name="username" placeholder="Tên đăng nhập" required class="form-input">
+                <input type="password" name="password" placeholder="Mật khẩu" required class="form-input">
+                <button type="submit" class="auction-btn">Đăng Nhập</button>
+            </form>
+            <p class="fee-info">Chưa có tài khoản? <a href="#" class="next-auction-highlight">Đăng ký</a></p>
+            <div class="social-icons" style="margin-top: 20px;">
+                <a href="#" class="social-icon">📧</a>
+                <a href="#" class="social-icon">📱</a>
+            </div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Use cases</h4>
+                    <ul>
+                        <li><a href="#">UI design</a></li>
+                        <li><a href="#">UX design</a></li>
+                        <li><a href="#">Wireframing</a></li>
+                        <li><a href="#">Diagramming</a></li>
+                        <li><a href="#">Brainstorming</a></li>
+                        <li><a href="#">Online whiteboard</a></li>
+                        <li><a href="#">Team collaboration</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Design</a></li>
+                        <li><a href="#">Prototyping</a></li>
+                        <li><a href="#">Development features</a></li>
+                        <li><a href="#">Design systems</a></li>
+                        <li><a href="#">Collaboration features</a></li>
+                        <li><a href="#">Design process</a></li>
+                        <li><a href="#">FigJam</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Best practices</a></li>
+                        <li><a href="#">Colors</a></li>
+                        <li><a href="#">Color wheel</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Resource library</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="social-icons">
+                    <a href="#" class="social-icon">🌐</a>
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">📸</a>
+                    <a href="#" class="social-icon">🐦</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>

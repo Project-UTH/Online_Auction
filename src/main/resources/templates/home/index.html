@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HammerX - Đấu Giá Trực Tuyến</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">H</div>
+            </div>
+            <nav class="nav-links">
+                <a href="#">Trang chủ</a>
+                <a href="#">Lịch</a>
+                <a href="#">Đăng nhập</a>
+            </nav>
+            <div class="auth-buttons">
+                <a href="#" class="btn btn-outline">Đăng nhập</a>
+                <a href="#" class="btn btn-primary">Đăng ký</a>
+            </div>
+        </div>
+    </header>
+    <div class="container">
+        <div class="hero">
+            <h1 class="title">HammerX</h1>
+            <p class="subtitle">Hệ thống đấu giá trực tuyến.<br>Chốt giá nhanh – Rinh ngay không buồn!</p>
+        </div>
+        <div class="action-container">
+            <button class="auction-btn">Bắt đầu đấu giá</button>
+            <p class="fee-info">Phí đấu giá bắt đầu từ: HHD hmm/s</p>
+           
+            <div class="countdown-section">
+                <div class="countdown-title">Phiên đấu giá tiếp theo</div>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">02</span>
+                        <div class="countdown-label">Ngày</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">14</span>
+                        <div class="countdown-label">Giờ</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">32</span>
+                        <div class="countdown-label">Phút</div>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">45</span>
+                        <div class="countdown-label">Giây</div>
+                    </div>
+                </div>
+                <div class="next-auction">
+                    Bắt đầu lúc <span class="next-auction-highlight">25/08/2025 - 16:00</span>
+                </div>
+            </div>
+        </div>
+        <div class="calendar-section">
+            <div class="calendar-header">
+                <div>
+                    <div class="calendar-title">Lịch đấu giá</div>
+                    <div class="calendar-subtitle">Sự kiện hôm</div>
+                </div>
+            </div>
+           
+            <div class="calendar-nav">
+                <button class="nav-btn">‹</button>
+                <div class="calendar-month">June 2024</div>
+                <button class="nav-btn">›</button>
+            </div>
+            <table class="calendar-grid">
+                <thead>
+                    <tr>
+                        <th>S</th>
+                        <th>M</th>
+                        <th>T</th>
+                        <th>W</th>
+                        <th>T</th>
+                        <th>F</th>
+                        <th>S</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><div class="date-cell other-month">30</div></td>
+                        <td><div class="date-cell other-month">31</div></td>
+                        <td><div class="date-cell">1</div></td>
+                        <td><div class="date-cell">2</div></td>
+                        <td><div class="date-cell">3</div></td>
+                        <td><div class="date-cell">4</div></td>
+                        <td><div class="date-cell">5</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="date-cell">6</div></td>
+                        <td><div class="date-cell">7</div></td>
+                        <td><div class="date-cell">8</div></td>
+                        <td><div class="date-cell">9</div></td>
+                        <td><div class="date-cell selected">10</div></td>
+                        <td><div class="date-cell">11</div></td>
+                        <td><div class="date-cell">12</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="date-cell">13</div></td>
+                        <td><div class="date-cell">14</div></td>
+                        <td><div class="date-cell">15</div></td>
+                        <td><div class="date-cell">16</div></td>
+                        <td><div class="date-cell today">17</div></td>
+                        <td><div class="date-cell">18</div></td>
+                        <td><div class="date-cell">19</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="date-cell">20</div></td>
+                        <td><div class="date-cell">21</div></td>
+                        <td><div class="date-cell">22</div></td>
+                        <td><div class="date-cell">23</div></td>
+                        <td><div class="date-cell">24</div></td>
+                        <td><div class="date-cell">25</div></td>
+                        <td><div class="date-cell selected">26</div></td>
+                    </tr>
+                    <tr>
+                        <td><div class="date-cell">27</div></td>
+                        <td><div class="date-cell">28</div></td>
+                        <td><div class="date-cell">29</div></td>
+                        <td><div class="date-cell">30</div></td>
+                        <td><div class="date-cell other-month">1</div></td>
+                        <td><div class="date-cell other-month">2</div></td>
+                        <td><div class="date-cell other-month">3</div></td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="end-time">8:00 AM</div>
+        </div>
+    </div>
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-grid">
+                <div class="footer-section">
+                    <h4>Use cases</h4>
+                    <ul>
+                        <li><a href="#">UI design</a></li>
+                        <li><a href="#">UX design</a></li>
+                        <li><a href="#">Wireframing</a></li>
+                        <li><a href="#">Diagramming</a></li>
+                        <li><a href="#">Brainstorming</a></li>
+                        <li><a href="#">Online whiteboard</a></li>
+                        <li><a href="#">Team collaboration</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Explore</h4>
+                    <ul>
+                        <li><a href="#">Design</a></li>
+                        <li><a href="#">Prototyping</a></li>
+                        <li><a href="#">Development features</a></li>
+                        <li><a href="#">Design systems</a></li>
+                        <li><a href="#">Collaboration features</a></li>
+                        <li><a href="#">Design process</a></li>
+                        <li><a href="#">FigJam</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Best practices</a></li>
+                        <li><a href="#">Colors</a></li>
+                        <li><a href="#">Color wheel</a></li>
+                        <li><a href="#">Support</a></li>
+                        <li><a href="#">Developers</a></li>
+                        <li><a href="#">Resource library</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="social-icons">
+                    <a href="#" class="social-icon">🌐</a>
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">📸</a>
+                    <a href="#" class="social-icon">🐦</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <script th:src="@{/js/script.js}"></script>
+</body>
+</html>
