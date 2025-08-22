@@ -14,13 +14,17 @@
                 <div class="logo-icon">H</div>
             </div>
             <nav class="nav-links">
-                <a href="#">Trang chủ</a>
-                <a href="#">Lịch</a>
-                <a href="#">Đăng nhập</a>
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/calendar}">Lịch</a>
+                <a th:href="@{/login}" th:if="${session.jwtToken == null}">Đăng nhập</a>
+                <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
             </nav>
-            <div class="auth-buttons">
-                <a href="#" class="btn btn-outline">Đăng nhập</a>
-                <a href="#" class="btn btn-primary">Đăng ký</a>
+            <div class="auth-buttons" th:unless="${session.jwtToken != null}">
+                <a th:href="@{/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+            <div th:if="${session.jwtToken != null}" class="user-info">
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName)}"></span>
             </div>
         </div>
     </header>
@@ -30,69 +34,23 @@
             <p class="subtitle">Tạo tài khoản để tham gia đấu giá ngay hôm nay!</p>
         </div>
         <div class="action-container">
-            <form action="#" method="post">
-                <input type="text" name="username" placeholder="Tên đăng nhập" required class="form-input">
-                <input type="password" name="password" placeholder="Mật khẩu" required class="form-input">
-                <input type="email" name="email" placeholder="Email" required class="form-input">
-                <input type="text" name="fullName" placeholder="Họ và tên" required class="form-input">
-                <input type="text" name="displayName" placeholder="Tên hiển thị" required class="form-input">
-                <input type="text" name="address" placeholder="Địa chỉ" required class="form-input">
-                <input type="text" name="phone" placeholder="Số điện thoại" required class="form-input">
-                <button type="submit" class="auction-btn">Đăng Ký</button>
-            </form>
-            <p class="fee-info">Đã có tài khoản? <a href="#" class="next-auction-highlight">Đăng nhập</a></p>
+            <form action="/register" method="post" th:action="@{/register}" th:object="${registerDTO}">
+            <input type="text" th:field="*{username}" placeholder="Tên đăng nhập" required class="form-input">
+            <input type="password" th:field="*{password}" placeholder="Mật khẩu" required class="form-input">
+            <input type="email" th:field="*{email}" placeholder="Email" required class="form-input">
+            <input type="text" th:field="*{fullName}" placeholder="Họ và tên" required class="form-input">
+            <input type="text" th:field="*{displayName}" placeholder="Tên hiển thị" required class="form-input">
+            <input type="text" th:field="*{address}" placeholder="Địa chỉ" required class="form-input">
+            <input type="text" th:field="*{phone}" placeholder="Số điện thoại" required class="form-input">
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <button type="submit" class="auction-btn">Đăng Ký</button>
+            <p th:if="${error}" class="error" th:text="${error}"></p>
+            <p th:if="${param.success}" class="success" th:text="${param.success}"></p> <!-- Hiển thị flash message -->
+        </form>
+            <p class="fee-info">Đã có tài khoản? <a th:href="@{/login}" class="next-auction-highlight">Đăng nhập</a></p>
         </div>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>Use cases</h4>
-                    <ul>
-                        <li><a href="#">UI design</a></li>
-                        <li><a href="#">UX design</a></li>
-                        <li><a href="#">Wireframing</a></li>
-                        <li><a href="#">Diagramming</a></li>
-                        <li><a href="#">Brainstorming</a></li>
-                        <li><a href="#">Online whiteboard</a></li>
-                        <li><a href="#">Team collaboration</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><a href="#">Design</a></li>
-                        <li><a href="#">Prototyping</a></li>
-                        <li><a href="#">Development features</a></li>
-                        <li><a href="#">Design systems</a></li>
-                        <li><a href="#">Collaboration features</a></li>
-                        <li><a href="#">Design process</a></li>
-                        <li><a href="#">FigJam</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Best practices</a></li>
-                        <li><a href="#">Colors</a></li>
-                        <li><a href="#">Color wheel</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">Developers</a></li>
-                        <li><a href="#">Resource library</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="social-icons">
-                    <a href="#" class="social-icon">🌐</a>
-                    <a href="#" class="social-icon">📘</a>
-                    <a href="#" class="social-icon">📸</a>
-                    <a href="#" class="social-icon">🐦</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div th:replace="~{footer}"></div> <!-- Include footer.html -->
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

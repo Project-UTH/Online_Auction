@@ -14,13 +14,17 @@
                 <div class="logo-icon">H</div>
             </div>
             <nav class="nav-links">
-                <a href="#">Trang chủ</a>
-                <a href="#">Lịch</a>
-                <a href="#">Đăng nhập</a>
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/calendar}">Lịch</a>
+                <a th:href="@{/login}" th:if="${session.jwtToken == null}">Đăng nhập</a>
+                <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
             </nav>
-            <div class="auth-buttons">
-                <a href="#" class="btn btn-outline">Đăng nhập</a>
-                <a href="#" class="btn btn-primary">Đăng ký</a>
+            <div class="auth-buttons" th:unless="${session.jwtToken != null}">
+                <a th:href="@{/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+            <div th:if="${session.jwtToken != null}" class="user-info">
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName)}"></span>
             </div>
         </div>
     </header>
@@ -29,33 +33,32 @@
             <h1 class="title">HammerX</h1>
             <p class="subtitle">Hệ thống đấu giá trực tuyến.<br>Chốt giá nhanh – Rinh ngay không buồn!</p>
         </div>
-        <div class="action-container">
-            <button class="auction-btn">Bắt đầu đấu giá</button>
+        <div class="action-container" th:if="${session.jwtToken != null}">
+            <button class="auction-btn" onclick="startAuction()">Bắt đầu đấu giá</button>
             <p class="fee-info">Phí đấu giá bắt đầu từ: HHD hmm/s</p>
-           
-            <div class="countdown-section">
-                <div class="countdown-title">Phiên đấu giá tiếp theo</div>
-                <div class="countdown-timer">
-                    <div class="countdown-item">
-                        <span class="countdown-number" id="days">02</span>
-                        <div class="countdown-label">Ngày</div>
-                    </div>
-                    <div class="countdown-item">
-                        <span class="countdown-number" id="hours">14</span>
-                        <div class="countdown-label">Giờ</div>
-                    </div>
-                    <div class="countdown-item">
-                        <span class="countdown-number" id="minutes">32</span>
-                        <div class="countdown-label">Phút</div>
-                    </div>
-                    <div class="countdown-item">
-                        <span class="countdown-number" id="seconds">45</span>
-                        <div class="countdown-label">Giây</div>
-                    </div>
+        </div>
+        <div class="countdown-section">
+            <div class="countdown-title">Phiên đấu giá tiếp theo</div>
+            <div class="countdown-timer">
+                <div class="countdown-item">
+                    <span class="countdown-number" id="days">02</span>
+                    <div class="countdown-label">Ngày</div>
                 </div>
-                <div class="next-auction">
-                    Bắt đầu lúc <span class="next-auction-highlight">25/08/2025 - 16:00</span>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="hours">14</span>
+                    <div class="countdown-label">Giờ</div>
                 </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="minutes">32</span>
+                    <div class="countdown-label">Phút</div>
+                </div>
+                <div class="countdown-item">
+                    <span class="countdown-number" id="seconds">45</span>
+                    <div class="countdown-label">Giây</div>
+                </div>
+            </div>
+            <div class="next-auction">
+                Bắt đầu lúc <span class="next-auction-highlight">25/08/2025 - 16:00</span>
             </div>
         </div>
         <div class="calendar-section">
@@ -65,7 +68,6 @@
                     <div class="calendar-subtitle">Sự kiện hôm</div>
                 </div>
             </div>
-           
             <div class="calendar-nav">
                 <button class="nav-btn">‹</button>
                 <div class="calendar-month">June 2024</div>
@@ -134,56 +136,7 @@
             <div class="end-time">8:00 AM</div>
         </div>
     </div>
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-grid">
-                <div class="footer-section">
-                    <h4>Use cases</h4>
-                    <ul>
-                        <li><a href="#">UI design</a></li>
-                        <li><a href="#">UX design</a></li>
-                        <li><a href="#">Wireframing</a></li>
-                        <li><a href="#">Diagramming</a></li>
-                        <li><a href="#">Brainstorming</a></li>
-                        <li><a href="#">Online whiteboard</a></li>
-                        <li><a href="#">Team collaboration</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Explore</h4>
-                    <ul>
-                        <li><a href="#">Design</a></li>
-                        <li><a href="#">Prototyping</a></li>
-                        <li><a href="#">Development features</a></li>
-                        <li><a href="#">Design systems</a></li>
-                        <li><a href="#">Collaboration features</a></li>
-                        <li><a href="#">Design process</a></li>
-                        <li><a href="#">FigJam</a></li>
-                    </ul>
-                </div>
-                <div class="footer-section">
-                    <h4>Resources</h4>
-                    <ul>
-                        <li><a href="#">Blog</a></li>
-                        <li><a href="#">Best practices</a></li>
-                        <li><a href="#">Colors</a></li>
-                        <li><a href="#">Color wheel</a></li>
-                        <li><a href="#">Support</a></li>
-                        <li><a href="#">Developers</a></li>
-                        <li><a href="#">Resource library</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom">
-                <div class="social-icons">
-                    <a href="#" class="social-icon">🌐</a>
-                    <a href="#" class="social-icon">📘</a>
-                    <a href="#" class="social-icon">📸</a>
-                    <a href="#" class="social-icon">🐦</a>
-                </div>
-            </div>
-        </div>
-    </footer>
+    <div th:replace="~{footer}"></div> <!-- Include footer.html -->
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>
