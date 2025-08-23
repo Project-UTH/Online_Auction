@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Tạo Phiên Đấu Giá</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">H</div>
+            </div>
+            <nav class="nav-links">
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/calendar}">Lịch</a>
+                <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
+            </nav>
+            <div class="auth-buttons" th:unless="${session.jwtToken != null}">
+                <a th:href="@{/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+            <div th:if="${session.jwtToken != null}" class="user-info">
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName)}"></span>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <h1 class="title">Tạo Phiên Đấu Giá Mới</h1>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
+        <form th:action="@{/admin/create-auction}" th:object="${auctionDTO}" method="post">
+            <input type="text" th:field="*{name}" placeholder="Tên phiên đấu giá" class="form-input" required>
+            <input type="datetime-local" th:field="*{startTime}" placeholder="Giờ bắt đầu" class="form-input" required>
+            <input type="datetime-local" th:field="*{endTime}" placeholder="Giờ kết thúc" class="form-input" required>
+            <button type="submit" class="auction-btn">Tạo Phiên</button>
+        </form>
+        
+        <div class="product-grid">
+            <h2>Danh Sách Sản Phẩm</h2>
+            <div class="grid">
+                <div th:each="product : ${products}" class="product-item">
+                    <img th:src="${product.imageUrl}" alt="Product" th:if="${product.imageUrl != null}">
+                    <p th:text="${product.name}"></p>
+                    <p th:text="'$' + ${product.startingPrice}"></p>
+                </div>
+                <div class="add-product">
+                    <a th:href="@{/admin/add-product}" class="add-btn">+</a>
+                </div>
+            </div>
+            <!-- Nút Hoàn thành -->
+            <form th:action="@{/admin/complete-auction}" method="post">
+                <button type="submit" class="auction-btn" style="margin-top: 20px;"></button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div th:replace="~{footer}"></div>
+</body>
+</html>

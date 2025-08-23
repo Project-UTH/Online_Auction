@@ -30,6 +30,7 @@ public class HomeController {
         if (session.getAttribute("jwtToken") != null) {
             String displayName = (String) session.getAttribute("displayName");
             model.addAttribute("displayName", displayName != null ? displayName : "Người dùng");
+            model.addAttribute("isAdmin", "ADMIN".equals(session.getAttribute("role"))); // Thêm kiểm tra role
         }
         // Sau này thêm danh sách phiên đấu giá từ AuctionService
         return "home/index";  // Trả về index.html
@@ -42,7 +43,7 @@ public class HomeController {
         return "home/login";  // Trả về login.html
     }
 
-    // Xử lý đăng nhập
+    // Xử lý đăng nhập - THÊM USERNAME VÀO SESSION
     @PostMapping("/login")
     public String loginSubmit(@Valid @ModelAttribute LoginDTO loginDTO, BindingResult bindingResult, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         System.out.println("Login attempt for: " + loginDTO.getUsername());
@@ -55,6 +56,10 @@ public class HomeController {
             JwtResponseDTO response = authService.login(loginDTO);
             session.setAttribute("jwtToken", response.getToken());
             session.setAttribute("role", response.getRole());
+            
+            // THÊM DÒNG NÀY - lưu username để AuctionController dùng
+            session.setAttribute("username", loginDTO.getUsername());
+            
             User user = authService.findUserByUsername(loginDTO.getUsername());
             session.setAttribute("displayName", user.getDisplayName());
             System.out.println("Login successful, redirecting to /");

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -23,6 +24,11 @@ public class Auction {
 
     @Column(nullable = false)
     private LocalDate auctionDate;  // Ngày đấu giá tổng thể của phiên
+    @Column(nullable = false)
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
 
     @OneToMany(mappedBy = "auction", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Product> products;  // Danh sách sản phẩm trong phiên (admin tạo trước)
@@ -33,7 +39,7 @@ public class Auction {
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "auction_participants",
+        name = "auction_participants",  
         joinColumns = @JoinColumn(name = "auction_id"),
         inverseJoinColumns = @JoinColumn(name = "user_id")
     )

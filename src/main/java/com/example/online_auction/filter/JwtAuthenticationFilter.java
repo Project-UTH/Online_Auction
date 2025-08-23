@@ -46,6 +46,27 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
+        } else {
+            // Thêm kiểm tra token từ session cho request Thymeleaf
+            String token = (String) request.getSession().getAttribute("jwtToken");
+            System.out.println("Token from session: " + token); // Log để debug
+            if (token != null && jwtUtil.validateToken(token)) {
+                String username = jwtUtil.getUsernameFromToken(token);
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+                UsernamePasswordAuthenticationToken authToken =
+                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+
+                // Set role vào session để AuctionController sử dụng (nếu cần)
+                String role = jwtUtil.getRoleFromToken(token);
+                System.out.println("Extracted role: " + role); // Log để debug
+                request.getSession().setAttribute("role", role);
+            } else {
+                System.out.println("No valid token found in session");
+            }
         }
 
         chain.doFilter(request, response);

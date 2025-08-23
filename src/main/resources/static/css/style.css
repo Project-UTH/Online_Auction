@@ -398,3 +398,90 @@ body {
         text-align: center;
     }
 }
+
+/* New Styles for Admin Features */
+
+/* Style for Admin Button on Index Page */
+.admin-button .btn-primary {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 14px;
+    width: auto; /* Để không chiếm toàn bộ chiều rộng */
+}
+
+/* Styles for Create Auction Page (create-auction.html) */
+.product-grid {
+    margin-top: 40px;
+    text-align: center;
+}
+.product-grid h2 {
+    font-size: 20px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+.grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 cột như ảnh */
+    gap: 20px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+.product-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 150px; /* Để giữ kích thước nhất quán */
+}
+.product-item img {
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 10px;
+}
+.product-item p {
+    color: #64748b;
+    font-size: 14px;
+}
+.add-product {
+    background: #f8fafc;
+    border: 1px dashed #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.add-btn {
+    font-size: 40px;
+    color: #3b82f6;
+    text-decoration: none;
+    cursor: pointer;
+}
+.add-btn:hover {
+    color: #2563eb;
+}
+
+/* Styles for Add Product Page (add-product.html) */
+.reviews {
+    margin-top: 40px;
+    text-align: left;
+}
+.reviews h2 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #1e293b;
+    margin-bottom: 20px;
+}
+.review-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 10px;
+    margin-bottom: 10px;
+    color: #64748b;
+    font-size: 14px;
+}

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Thêm Sản Phẩm</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header"> <!-- Copy từ index.html --> </header>
+
+    <div class="container">
+        <h1 class="title">Thêm Sản Phẩm Mới</h1>
+        <form th:action="@{/admin/add-product}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
+            <input type="text" th:field="*{name}" placeholder="Tên sản phẩm" class="form-input" required>
+            <textarea th:field="*{description}" placeholder="Mô tả" class="form-input"></textarea>
+            <input type="number" th:field="*{startingPrice}" placeholder="Giá khởi điểm" class="form-input" required step="0.01">
+            <input type="number" th:field="*{minimumBidIncrement}" placeholder="Tăng giá tối thiểu" class="form-input" required step="0.01">
+            <input type="file" th:field="*{imageFile}" accept="image/*" class="form-input">
+            <input type="datetime-local" th:field="*{startTime}" placeholder="Giờ bắt đầu sản phẩm" class="form-input" required>
+            <input type="datetime-local" th:field="*{endTime}" placeholder="Giờ kết thúc sản phẩm" class="form-input" required>
+            <button type="submit" class="auction-btn">OK</button>
+        </form>
+        
+        <div class="reviews">
+            <h2>Latest reviews</h2>
+            <div class="review-item">Review Title 1 - 5 stars</div>
+            <div class="review-item">Review Title 2 - 4 stars</div>
+        </div>
+    </div>
+    <!-- Footer -->
+</body>
+</html>
