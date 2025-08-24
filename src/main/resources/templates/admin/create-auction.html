@@ -37,24 +37,6 @@
             <input type="datetime-local" th:field="*{endTime}" placeholder="Giờ kết thúc" class="form-input" required>
             <button type="submit" class="auction-btn">Tạo Phiên</button>
         </form>
-        
-        <div class="product-grid">
-            <h2>Danh Sách Sản Phẩm</h2>
-            <div class="grid">
-                <div th:each="product : ${products}" class="product-item">
-                    <img th:src="${product.imageUrl}" alt="Product" th:if="${product.imageUrl != null}">
-                    <p th:text="${product.name}"></p>
-                    <p th:text="'$' + ${product.startingPrice}"></p>
-                </div>
-                <div class="add-product">
-                    <a th:href="@{/admin/add-product}" class="add-btn">+</a>
-                </div>
-            </div>
-            <!-- Nút Hoàn thành -->
-            <form th:action="@{/admin/complete-auction}" method="post">
-                <button type="submit" class="auction-btn" style="margin-top: 20px;"></button>
-            </form>
-        </div>
     </div>
 
     <!-- Footer -->

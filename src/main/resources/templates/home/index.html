@@ -36,8 +36,9 @@
         <div class="action-container" th:if="${session.jwtToken != null}">
             <button class="auction-btn" onclick="startAuction()">Bắt đầu đấu giá</button>
             <p class="fee-info">Phí đấu giá bắt đầu từ: HHD hmm/s</p>
-            <!-- Nút Tạo phiên đấu giá chỉ hiển thị cho admin -->
+            <!-- Nút Tạo phiên đấu giá và Danh sách phiên đấu giá chỉ hiển thị cho admin -->
             <a th:if="${session.role == 'ADMIN'}" th:href="@{/admin/create-auction}" class="btn btn-primary" style="margin-top: 10px;">Tạo phiên đấu giá</a>
+            <a th:if="${session.role == 'ADMIN'}" th:href="@{/auction-list}" class="btn btn-primary" style="margin-top: 10px;">Danh sách các phiên đấu giá</a>
         </div>
         <div class="countdown-section">
             <div class="countdown-title">Phiên đấu giá tiếp theo</div>

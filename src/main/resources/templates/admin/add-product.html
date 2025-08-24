@@ -11,7 +11,7 @@
 
     <div class="container">
         <h1 class="title">Thêm Sản Phẩm Mới</h1>
-        <form th:action="@{/admin/add-product}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/admin/add-product/{auctionId}(auctionId=${auctionId})}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
             <input type="text" th:field="*{name}" placeholder="Tên sản phẩm" class="form-input" required>
             <textarea th:field="*{description}" placeholder="Mô tả" class="form-input"></textarea>
             <input type="number" th:field="*{startingPrice}" placeholder="Giá khởi điểm" class="form-input" required step="0.01">

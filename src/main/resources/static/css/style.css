@@ -435,14 +435,63 @@ body {
     text-align: center;
     min-height: 150px; /* Để giữ kích thước nhất quán */
 }
-.product-item img {
-    max-width: 100%;
-    height: auto;
-    margin-bottom: 10px;
+/* Styles for Auction List Items */
+.product-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    min-height: 200px; /* Tăng chiều cao để chứa thêm thông tin */
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
 }
+
 .product-item p {
     color: #64748b;
     font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.product-item strong {
+    color: #1e293b;
+    font-weight: 600;
+}
+
+.product-item.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.product-item .auction-btn {
+    background: #3b82f6;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+    width: auto;
+    align-self: center;
+}
+
+.product-item .auction-btn:hover {
+    background: #2563eb;
+    transform: translateY(-1px);
+}
+
+/* Đảm bảo grid hiển thị đẹp trên các kích thước màn hình */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Điều chỉnh kích thước ô */
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 .add-product {
     background: #f8fafc;

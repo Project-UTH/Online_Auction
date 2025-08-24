@@ -3,7 +3,9 @@ package com.example.online_auction.controller;
 import com.example.online_auction.dto.JwtResponseDTO;
 import com.example.online_auction.dto.LoginDTO;
 import com.example.online_auction.dto.RegisterDTO;
+import com.example.online_auction.entity.Auction;
 import com.example.online_auction.entity.User;
+import com.example.online_auction.service.AuctionService;
 import com.example.online_auction.service.AuthService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
@@ -17,12 +19,17 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.List;
+
 @Controller
 @RequestMapping("/")
 public class HomeController {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private AuctionService auctionService;
 
     // Hiển thị trang chủ
     @GetMapping
@@ -32,8 +39,20 @@ public class HomeController {
             model.addAttribute("displayName", displayName != null ? displayName : "Người dùng");
             model.addAttribute("isAdmin", "ADMIN".equals(session.getAttribute("role"))); // Thêm kiểm tra role
         }
-        // Sau này thêm danh sách phiên đấu giá từ AuctionService
-        return "home/index";  // Trả về index.html
+        
+        return "home/index";  // Trả về index.html (không hiển thị danh sách auctions)
+    }
+
+    // Hiển thị trang danh sách phiên đấu giá
+    @GetMapping("/auction-list")
+    public String auctionList(Model model, HttpSession session) {
+        if (session.getAttribute("jwtToken") == null || !"ADMIN".equals(session.getAttribute("role"))) {
+            return "redirect:/";
+        }
+        
+        List<Auction> auctions = auctionService.getAllAuctions();
+        model.addAttribute("auctions", auctions);
+        return "admin/auction-list";  // Trang mới cho danh sách phiên đấu giá
     }
 
     // Hiển thị trang đăng nhập
