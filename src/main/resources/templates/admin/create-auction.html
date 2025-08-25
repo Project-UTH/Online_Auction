@@ -32,14 +32,79 @@
         <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
         <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
         <form th:action="@{/admin/create-auction}" th:object="${auctionDTO}" method="post">
-            <input type="text" th:field="*{name}" placeholder="Tên phiên đấu giá" class="form-input" required>
-            <input type="datetime-local" th:field="*{startTime}" placeholder="Giờ bắt đầu" class="form-input" required>
-            <input type="datetime-local" th:field="*{endTime}" placeholder="Giờ kết thúc" class="form-input" required>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <div th:if="${#fields.hasErrors('*')}" class="alert alert-error">
+                <span th:each="error : ${#fields.errors('*')}" th:text="${error}"></span>
+            </div>
+            <div class="form-group">
+                <label for="name">Tên phiên đấu giá:</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="Tên phiên đấu giá" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="auctionDate">Ngày diễn ra:</label>
+                <input type="date" th:field="*{auctionDate}" id="auctionDate" placeholder="Ngày diễn ra" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="startTime">Giờ bắt đầu:</label>
+                <input type="time" th:field="*{startTime}" id="startTime" placeholder="Giờ bắt đầu" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="endTime">Giờ kết thúc:</label>
+                <input type="time" th:field="*{endTime}" id="endTime" placeholder="Giờ kết thúc" class="form-input" required>
+            </div>
             <button type="submit" class="auction-btn">Tạo Phiên</button>
         </form>
     </div>
 
     <!-- Footer -->
-    <div th:replace="~{footer}"></div>
+    <div th:replace="~{footer :: footer}"></div>
+
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .auction-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auction-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+    </style>
 </body>
 </html>

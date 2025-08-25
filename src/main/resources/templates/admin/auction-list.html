@@ -51,7 +51,8 @@
                     </a>
                     
                     <p><strong>Tên:</strong> <span th:text="${auction.name} ?: 'Chưa đặt tên'"></span></p>
-                    <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(auction.startTime, 'HH:mm dd/MM/yyyy')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                    <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                    <p><strong>Giờ:</strong> <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
                     <p><strong>Trạng thái:</strong> 
                         <span th:class="'status-badge pending'" th:text="${auction.status} ?: 'Chưa xác định'"></span>
                     </p>
@@ -68,7 +69,8 @@
                      th:attr="data-id=${auction.id}">
                     
                     <p><strong>Tên:</strong> <span th:text="${auction.name} ?: 'Chưa đặt tên'"></span></p>
-                    <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(auction.startTime, 'HH:mm dd/MM/yyyy')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                    <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                    <p><strong>Giờ:</strong> <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
                     <p><strong>Trạng thái:</strong> 
                         <span th:class="'status-badge ' + ${#strings.toLowerCase(auction.status)}" th:text="${auction.status} ?: 'Chưa xác định'"></span>
                     </p>
@@ -85,10 +87,9 @@
     </div>
 
     <!-- Footer -->
-    <div th:replace="~{footer}"></div>
+    <div th:replace="~{footer :: footer}"></div>
 
     <style>
-        /* CSS cho clickable cards */
         .product-item {
             border: 1px solid #ddd;
             border-radius: 8px;
@@ -96,14 +97,10 @@
             background: white;
             transition: all 0.3s ease;
         }
-
-        /* Style cho ô PENDING */
         .product-item:hover {
             transform: translateY(-5px);
             box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
         }
-
-        /* Status badge styles */
         .status-badge {
             display: inline-block;
             padding: 4px 8px;
@@ -112,28 +109,22 @@
             font-weight: 600;
             text-transform: uppercase;
         }
-
         .status-badge.pending {
             background-color: #f39c12;
             color: white;
         }
-
         .status-badge.active {
             background-color: #27ae60;
             color: white;
         }
-
         .status-badge.completed {
             background-color: #95a5a6;
             color: white;
         }
-
         .status-badge.cancelled {
             background-color: #e74c3c;
             color: white;
         }
-
-        /* Disabled cards */
         .product-item.active,
         .product-item.completed,
         .product-item.cancelled {
@@ -141,26 +132,20 @@
             background-color: #f8f9fa;
             cursor: default;
         }
-
-        /* Click hint animation */
         .click-hint {
             margin-top: 10px;
             animation: pulse 2s infinite;
         }
-
         @keyframes pulse {
             0% { opacity: 0.7; }
             50% { opacity: 1; }
             100% { opacity: 0.7; }
         }
-
-        /* Grid responsive */
         .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 20px;
         }
-
         .auction-btn {
             background: #3b82f6;
             color: white;
@@ -174,10 +159,25 @@
             text-decoration: none;
             display: inline-block;
         }
-
         .auction-btn:hover {
             background: #2563eb;
             transform: translateY(-1px);
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
         }
     </style>
 </body>

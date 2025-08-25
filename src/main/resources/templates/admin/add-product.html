@@ -7,18 +7,63 @@
 </head>
 <body>
     <!-- Header -->
-    <header class="header"> <!-- Copy từ index.html --> </header>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">H</div>
+            </div>
+            <nav class="nav-links">
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/calendar}">Lịch</a>
+                <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
+            </nav>
+            <div class="auth-buttons" th:unless="${session.jwtToken != null}">
+                <a th:href="@{/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+            <div th:if="${session.jwtToken != null}" class="user-info">
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName)}"></span>
+            </div>
+        </div>
+    </header>
 
     <div class="container">
         <h1 class="title">Thêm Sản Phẩm Mới</h1>
+        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
         <form th:action="@{/admin/add-product/{auctionId}(auctionId=${auctionId})}" th:object="${productDTO}" method="post" enctype="multipart/form-data">
-            <input type="text" th:field="*{name}" placeholder="Tên sản phẩm" class="form-input" required>
-            <textarea th:field="*{description}" placeholder="Mô tả" class="form-input"></textarea>
-            <input type="number" th:field="*{startingPrice}" placeholder="Giá khởi điểm" class="form-input" required step="0.01">
-            <input type="number" th:field="*{minimumBidIncrement}" placeholder="Tăng giá tối thiểu" class="form-input" required step="0.01">
-            <input type="file" th:field="*{imageFile}" accept="image/*" class="form-input">
-            <input type="datetime-local" th:field="*{startTime}" placeholder="Giờ bắt đầu sản phẩm" class="form-input" required>
-            <input type="datetime-local" th:field="*{endTime}" placeholder="Giờ kết thúc sản phẩm" class="form-input" required>
+            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+            <div th:if="${#fields.hasErrors('*')}" class="alert alert-error">
+                <span th:each="error : ${#fields.errors('*')}" th:text="${error}"></span>
+            </div>
+            <div class="form-group">
+                <label for="name">Tên sản phẩm:</label>
+                <input type="text" th:field="*{name}" id="name" placeholder="Tên sản phẩm" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Mô tả:</label>
+                <textarea th:field="*{description}" id="description" placeholder="Mô tả" class="form-input"></textarea>
+            </div>
+            <div class="form-group">
+                <label for="startingPrice">Giá khởi điểm:</label>
+                <input type="number" th:field="*{startingPrice}" id="startingPrice" placeholder="Giá khởi điểm" class="form-input" required step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="minimumBidIncrement">Tăng giá tối thiểu:</label>
+                <input type="number" th:field="*{minimumBidIncrement}" id="minimumBidIncrement" placeholder="Tăng giá tối thiểu" class="form-input" required step="0.01">
+            </div>
+            <div class="form-group">
+                <label for="imageFile">Ảnh sản phẩm:</label>
+                <input type="file" th:field="*{imageFile}" id="imageFile" accept="image/*" class="form-input">
+            </div>
+            <div class="form-group">
+                <label for="startTime">Giờ bắt đầu:</label>
+                <input type="time" th:field="*{startTime}" id="startTime" placeholder="Giờ bắt đầu sản phẩm" class="form-input" required>
+            </div>
+            <div class="form-group">
+                <label for="endTime">Giờ kết thúc:</label>
+                <input type="time" th:field="*{endTime}" id="endTime" placeholder="Giờ kết thúc sản phẩm" class="form-input" required>
+            </div>
             <button type="submit" class="auction-btn">OK</button>
         </form>
         
@@ -28,6 +73,56 @@
             <div class="review-item">Review Title 2 - 4 stars</div>
         </div>
     </div>
+
     <!-- Footer -->
+    <div th:replace="~{footer :: footer}"></div>
+
+    <style>
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .auction-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auction-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+    </style>
 </body>
 </html>

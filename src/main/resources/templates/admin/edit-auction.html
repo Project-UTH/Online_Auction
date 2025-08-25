@@ -2,7 +2,7 @@
 <html lang="vi" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title> Phiên Đấu Giá</title>
+    <title>Chỉnh Sửa Phiên Đấu Giá</title>
     <link th:href="@{/css/style.css}" rel="stylesheet">
 </head>
 <body>
@@ -38,10 +38,11 @@
                 <!-- Hiển thị các sản phẩm hiện có -->
                 <div th:each="product : ${products}" class="product-item">
                     <img th:src="${product.imageUrl}" alt="Product" th:if="${product.imageUrl != null}">
-                    <p th:text="${product.name}"></p>
-                    <p th:text="'Giá khởi điểm: $' + ${product.startingPrice}"></p>
-                    <p th:text="'Tăng giá tối thiểu: $' + ${product.minimumBidIncrement}"></p>
-                    <p th:text="'Thời gian: ' + ${#temporals.format(product.startTime, 'HH:mm dd/MM/yyyy')} + ' - ' + ${#temporals.format(product.endTime, 'HH:mm dd/MM/yyyy')}"></p>
+                    <p><strong>Tên:</strong> <span th:text="${product.name}"></span></p>
+                    <p><strong>Giá khởi điểm:</strong> <span th:text="'$' + ${product.startingPrice}"></span></p>
+                    <p><strong>Tăng giá tối thiểu:</strong> <span th:text="'$' + ${product.minimumBidIncrement}"></span></p>
+                    <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                    <p><strong>Giờ:</strong> <span th:text="${#temporals.format(product.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(product.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
                 </div>
                 <!-- Ô "+" để thêm sản phẩm mới -->
                 <div class="add-product">
@@ -50,12 +51,79 @@
             </div>
             <!-- Nút Hoàn thành -->
             <form th:action="@{/admin/complete-auction/{id}(id=${auction.id})}" method="post">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
                 <button type="submit" class="auction-btn" style="margin-top: 20px;">Hoàn Thành</button>
             </form>
         </div>
     </div>
 
     <!-- Footer -->
-    <div th:replace="~{footer}"></div>
+    <div th:replace="~{footer :: footer}"></div>
+
+    <style>
+        .product-item {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .add-product {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+        }
+        .add-btn {
+            font-size: 24px;
+            text-decoration: none;
+            color: #3b82f6;
+            padding: 20px;
+        }
+        .add-btn:hover {
+            color: #2563eb;
+        }
+        .auction-btn {
+            background: #3b82f6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .auction-btn:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+        }
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+    </style>
 </body>
 </html>

@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime; // Thay đổi từ LocalDateTime
 
 @Entity
 @Table(name = "products")
@@ -18,42 +18,39 @@ public class Product {
     private Long id;
 
     @Column(nullable = false)
-    private String name;  // Tên sản phẩm
+    private String name;
 
     @Column(columnDefinition = "TEXT")
-    private String description;  // Mô tả sản phẩm
+    private String description;
 
     @Column(nullable = false)
-    private Double startingPrice;  // Giá khởi điểm
+    private Double startingPrice;
 
     @Column(nullable = false)
-    private Double minimumBidIncrement;  // Tăng giá thầu tối thiểu (ví dụ: 10$)
+    private Double minimumBidIncrement;
 
     @Column
-    private String imageUrl;  // URL ảnh (ví dụ: /images/products/product-1.jpg, lưu local)
+    private String imageUrl;
 
     @Column(nullable = false)
-    private LocalDateTime startTime;  // Thời gian bắt đầu đấu giá sản phẩm này
+    private LocalTime startTime; // Thay đổi thành LocalTime
 
     @Column(nullable = false)
-    private LocalDateTime endTime;  // Thời gian kết thúc đấu giá sản phẩm này
+    private LocalTime endTime; // Thay đổi thành LocalTime
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Status status = Status.PENDING;  // Trạng thái sản phẩm
+    private Status status = Status.PENDING;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "winner_id")
-    private User winner;  // Người thắng cuộc khi kết thúc (cập nhật tự động)
+    private User winner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "auction_id", nullable = false)
-    private Auction auction;  // Liên kết với phiên đấu giá
+    private Auction auction;
 
     public enum Status {
-        PENDING,  // Chờ bắt đầu
-        ACTIVE,   // Đang đấu giá
-        COMPLETED,  // Kết thúc
-        CANCELLED  // Hủy
+        PENDING, ACTIVE, COMPLETED, CANCELLED
     }
 }

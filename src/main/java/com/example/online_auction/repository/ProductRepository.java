@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -16,7 +16,7 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
            "AND ((p.startTime < :endTime AND p.endTime > :startTime) OR " +
            "(p.endTime > :startTime AND p.startTime < :endTime))")
     List<Product> findOverlappingProducts(@Param("auctionId") Long auctionId,
-                                          @Param("id") Long id,
-                                          @Param("startTime") LocalDateTime startTime,
-                                          @Param("endTime") LocalDateTime endTime);
+                                         @Param("id") Long id,
+                                         @Param("startTime") LocalTime startTime,
+                                         @Param("endTime") LocalTime endTime);
 }

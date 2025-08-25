@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime; // Thêm import này
+import java.time.LocalTime;
 import java.util.List;
 
 @Repository
@@ -19,7 +19,7 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
            "AND ((a.startTime < :endTime AND a.endTime > :startTime) OR " +
            "(a.endTime > :startTime AND a.startTime < :endTime))")
     List<Auction> findOverlappingAuctions(@Param("date") LocalDate date,
-                                          @Param("id") Long id,
-                                          @Param("startTime") LocalDateTime startTime,
-                                          @Param("endTime") LocalDateTime endTime);
+                                         @Param("id") Long id,
+                                         @Param("startTime") LocalTime startTime,
+                                         @Param("endTime") LocalTime endTime);
 }
