@@ -24,10 +24,8 @@ import java.util.List;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-
     @Autowired
     private AuthService authService;
-
     @Autowired
     private AuctionService auctionService;
 
@@ -39,8 +37,7 @@ public class HomeController {
             model.addAttribute("displayName", displayName != null ? displayName : "Người dùng");
             model.addAttribute("isAdmin", "ADMIN".equals(session.getAttribute("role"))); // Thêm kiểm tra role
         }
-        
-        return "home/index";  // Trả về index.html (không hiển thị danh sách auctions)
+        return "home/index"; // Trả về index.html (không hiển thị danh sách auctions)
     }
 
     // Hiển thị trang danh sách phiên đấu giá
@@ -49,17 +46,16 @@ public class HomeController {
         if (session.getAttribute("jwtToken") == null || !"ADMIN".equals(session.getAttribute("role"))) {
             return "redirect:/";
         }
-        
         List<Auction> auctions = auctionService.getAllAuctions();
         model.addAttribute("auctions", auctions);
-        return "admin/auction-list";  // Trang mới cho danh sách phiên đấu giá
+        return "admin/auction-list"; // Trang mới cho danh sách phiên đấu giá
     }
 
     // Hiển thị trang đăng nhập
     @GetMapping("/login")
     public String login(Model model) {
         model.addAttribute("loginDTO", new LoginDTO());
-        return "home/login";  // Trả về login.html
+        return "home/login"; // Trả về login.html
     }
 
     // Xử lý đăng nhập - THÊM USERNAME VÀO SESSION
@@ -75,19 +71,19 @@ public class HomeController {
             JwtResponseDTO response = authService.login(loginDTO);
             session.setAttribute("jwtToken", response.getToken());
             session.setAttribute("role", response.getRole());
-            
             // THÊM DÒNG NÀY - lưu username để AuctionController dùng
             session.setAttribute("username", loginDTO.getUsername());
-            
             User user = authService.findUserByUsername(loginDTO.getUsername());
             session.setAttribute("displayName", user.getDisplayName());
+            // Lưu token vào flash attribute để JavaScript lấy
+            redirectAttributes.addFlashAttribute("jwtToken", response.getToken());
             System.out.println("Login successful, redirecting to /");
-            return "redirect:/";  // Chuyển về trang chủ sau khi đăng nhập
+            return "redirect:/"; // Chuyển về trang chủ sau khi đăng nhập
         } catch (Exception e) {
             System.out.println("Login error: " + e.getMessage());
             model.addAttribute("loginDTO", loginDTO);
             model.addAttribute("error", "Đăng nhập thất bại: " + (e.getMessage() != null ? e.getMessage() : "Lỗi không xác định"));
-            return "home/login";  // Quay lại trang login nếu lỗi
+            return "home/login"; // Quay lại trang login nếu lỗi
         }
     }
 
@@ -95,7 +91,7 @@ public class HomeController {
     @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("registerDTO", new RegisterDTO());
-        return "home/register";  // Trả về register.html
+        return "home/register"; // Trả về register.html
     }
 
     // Xử lý đăng ký
@@ -111,12 +107,12 @@ public class HomeController {
             authService.register(registerDTO);
             System.out.println("Register successful, redirecting to /login");
             redirectAttributes.addFlashAttribute("success", "Đăng ký thành công! Vui lòng đăng nhập.");
-            return "redirect:/login";  // Chuyển sang trang login sau khi đăng ký
+            return "redirect:/login"; // Chuyển sang trang login sau khi đăng ký
         } catch (Exception e) {
             System.out.println("Register error: " + e.getMessage());
             model.addAttribute("registerDTO", registerDTO);
             model.addAttribute("error", "Đăng ký thất bại: " + (e.getMessage() != null ? e.getMessage() : "Lỗi không xác định"));
-            return "home/register";  // Quay lại trang register nếu lỗi
+            return "home/register"; // Quay lại trang register nếu lỗi
         }
     }
 

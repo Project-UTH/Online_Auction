@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HammerX - Xem Chi Tiết Phiên Đấu Giá</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        .auction-details {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .product-list {
+            margin-top: 20px;
+        }
+        .product-item {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .back-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #3b82f6;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-btn:hover {
+            background-color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <header th:replace="~{fragments/header :: header}"></header> <!-- Sử dụng fragment header -->
+
+    <div class="container">
+        <div class="auction-details">
+            <h2 th:text="${auction.name} + ' - Chi Tiết Phiên Đấu Giá'"></h2>
+            <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')}"></span></p>
+            <p><strong>Thời gian:</strong> <span th:text="${auction.startTime} + ' - ' + ${auction.endTime}"></span></p>
+            <p><strong>Trạng thái:</strong> <span th:text="${auction.status}"></span></p>
+
+            <div class="product-list">
+                <h3>Danh sách sản phẩm</h3>
+                <div th:each="product : ${auction.products}" class="product-item">
+                    <p><strong>Tên:</strong> <span th:text="${product.name}"></span></p>
+                    <p><strong>Giá khởi điểm:</strong> <span th:text="${#numbers.formatDecimal(product.startingPrice, 0, 2)}"></span> VNĐ</p>
+                    <p><strong>Trạng thái:</strong> <span th:text="${product.status}"></span></p>
+                </div>
+                <p th:if="${#lists.isEmpty(auction.products)}" class="product-item">Không có sản phẩm nào trong phiên đấu giá này.</p>
+            </div>
+        </div>
+        <a th:href="@{/calendar}" class="back-btn">Quay lại lịch</a>
+    </div>
+
+    <div th:replace="~{footer}"></div>
+</body>
+</html>

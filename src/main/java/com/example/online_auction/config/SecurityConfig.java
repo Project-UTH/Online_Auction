@@ -17,7 +17,6 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig {
-
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
         return new JwtAuthenticationFilter();
@@ -36,19 +35,20 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            // Không cần disable CSRF vì session stateless
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()  // Cho phép đăng ký/đăng nhập
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")  // Chỉ admin
-                .anyRequest().authenticated()  // Các request khác cần auth
-            )
-            // Cấu hình stateless trực tiếp qua securityContext
-            .securityContext(securityContext -> securityContext
-                .requireExplicitSave(false)
-            )
-            .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/", "/login", "/register", "/css/**", "/js/**").permitAll()
+                        .requestMatchers("/api/auth/**").permitAll()
+                        .requestMatchers("/admin/api/auctions").authenticated()
+                        .requestMatchers("/admin/api/auctions/dates").authenticated()
+                        .requestMatchers("/admin/api/auctions/by-date").authenticated()
+                        .requestMatchers("/admin/view-auction/**").hasAnyRole("ADMIN", "USER") // Cho phép cả USER và ADMIN xem
+                        .requestMatchers("/admin/edit-auction/**", "/admin/create-auction/**", "/complete-auction/**").hasRole("ADMIN") // Chỉ ADMIN chỉnh sửa
+                        .anyRequest().authenticated()
+                )
+                .securityContext(securityContext -> securityContext
+                        .requireExplicitSave(false)
+                )
+                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

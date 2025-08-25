@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Phiên Đấu Giá</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+</head>
+<body>
+    <header class="header" th:replace="~{fragments/header :: header}"></header>
+
+    <div class="container">
+        <div class="hero">
+            <h1 class="title">Chi tiết Phiên Đấu Giá</h1>
+        </div>
+        <div th:if="${error}" class="error-message" th:text="${error}" style="color: red;"></div>
+        <div th:if="${auction}">
+            <div>
+                <strong>Tên Phiên:</strong> <span th:text="${auction.name}"></span><br>
+                <strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')}"></span><br>
+                <strong>Giờ Bắt Đầu:</strong> <span th:text="${auction.startTime}"></span><br>
+                <strong>Giờ Kết Thúc:</strong> <span th:text="${auction.endTime}"></span><br>
+                <strong>Trạng Thái:</strong> <span th:text="${auction.status}"></span>
+            </div>
+            <div th:if="${isAdmin}">
+                <a th:href="@{/admin/edit-auction/{id}(id=${auction.id})}" class="btn btn-primary">Chỉnh sửa</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{footer}"></div>
+</body>
+</html>

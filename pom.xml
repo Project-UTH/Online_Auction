@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <netty-socketio.version>1.7.19</netty-socketio.version> <!-- Phiên bản Socket.IO -->
+        <netty-socketio.version>2.0.3</netty-socketio.version> <!-- Cập nhật phiên bản mới hơn -->
     </properties>
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -46,21 +46,21 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-redis</artifactId> <!-- Redis -->
+            <artifactId>spring-boot-starter-data-redis</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
-        <!-- WebSocket (Socket.IO) -->
+        <!-- WebSocket (Socket.IO) - Cập nhật phiên bản -->
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
             <artifactId>netty-socketio</artifactId>
             <version>${netty-socketio.version}</version>
         </dependency>
 
-        <!-- Thymeleaf (nếu cần frontend tích hợp) -->
+        <!-- Thymeleaf -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -77,6 +77,7 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -95,6 +96,11 @@
             <scope>runtime</scope>
         </dependency>
 
+        <!-- Jackson (đảm bảo rõ ràng) -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
 
         <!-- DevTools -->
         <dependency>
@@ -106,10 +112,10 @@
         <dependency>
             <groupId>jakarta.annotation</groupId>
             <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version> <!-- Phiên bản mới nhất, tương thích Java 21 -->
+            <version>2.1.1</version>
         </dependency>
 
-        <!-- Lombok (tùy chọn) -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>

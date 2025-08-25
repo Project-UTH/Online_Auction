@@ -6,6 +6,45 @@
     <title>HammerX - Đấu Giá Trực Tuyến</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet">
+    <style>
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .modal-content {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border-radius: 8px;
+            width: 80%;
+            max-width: 500px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        .modal-close {
+            float: right;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .auction-item {
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 10px;
+        }
+        .auction-item a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        .auction-item a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
     <header class="header">
@@ -28,6 +67,7 @@
             </div>
         </div>
     </header>
+
     <div class="container">
         <div class="hero">
             <h1 class="title">HammerX</h1>
@@ -36,32 +76,31 @@
         <div class="action-container" th:if="${session.jwtToken != null}">
             <button class="auction-btn" onclick="startAuction()">Bắt đầu đấu giá</button>
             <p class="fee-info">Phí đấu giá bắt đầu từ: HHD hmm/s</p>
-            <!-- Nút Tạo phiên đấu giá và Danh sách phiên đấu giá chỉ hiển thị cho admin -->
-            <a th:if="${session.role == 'ADMIN'}" th:href="@{/admin/create-auction}" class="btn btn-primary" style="margin-top: 10px;">Tạo phiên đấu giá</a>
-            <a th:if="${session.role == 'ADMIN'}" th:href="@{/auction-list}" class="btn btn-primary" style="margin-top: 10px;">Danh sách các phiên đấu giá</a>
+            <a th:if="${session.role == 'ADMIN'}" th:href="@{/admin/create-auction}" class="btn btn-primary admin-button">Tạo phiên đấu giá</a>
+            <a th:if="${session.role == 'ADMIN'}" th:href="@{/auction-list}" class="btn btn-primary admin-button">Danh sách các phiên đấu giá</a>
         </div>
         <div class="countdown-section">
             <div class="countdown-title">Phiên đấu giá tiếp theo</div>
             <div class="countdown-timer">
                 <div class="countdown-item">
-                    <span class="countdown-number" id="days">02</span>
+                    <span class="countdown-number" id="days">00</span>
                     <div class="countdown-label">Ngày</div>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-number" id="hours">14</span>
+                    <span class="countdown-number" id="hours">00</span>
                     <div class="countdown-label">Giờ</div>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-number" id="minutes">32</span>
+                    <span class="countdown-number" id="minutes">00</span>
                     <div class="countdown-label">Phút</div>
                 </div>
                 <div class="countdown-item">
-                    <span class="countdown-number" id="seconds">45</span>
+                    <span class="countdown-number" id="seconds">00</span>
                     <div class="countdown-label">Giây</div>
                 </div>
             </div>
             <div class="next-auction">
-                Bắt đầu lúc <span class="next-auction-highlight">25/08/2025 - 16:00</span>
+                Bắt đầu lúc <span class="next-auction-highlight" id="next-auction-time">Chưa có phiên đấu giá</span>
             </div>
         </div>
         <div class="calendar-section">
@@ -70,13 +109,13 @@
                     <div class="calendar-title">Lịch đấu giá</div>
                     <div class="calendar-subtitle">Sự kiện hôm</div>
                 </div>
+                <div class="calendar-nav">
+                    <button class="nav-btn" onclick="prevMonth()">‹</button>
+                    <div class="calendar-month" id="calendar-month">Tháng 8 2025</div>
+                    <button class="nav-btn" onclick="nextMonth()">›</button>
+                </div>
             </div>
-            <div class="calendar-nav">
-                <button class="nav-btn">‹</button>
-                <div class="calendar-month">June 2024</div>
-                <button class="nav-btn">›</button>
-            </div>
-            <table class="calendar-grid">
+            <table class="calendar-grid" id="calendar-grid">
                 <thead>
                     <tr>
                         <th>S</th>
@@ -88,58 +127,267 @@
                         <th>S</th>
                     </tr>
                 </thead>
-                <tbody>
-                    <tr>
-                        <td><div class="date-cell other-month">30</div></td>
-                        <td><div class="date-cell other-month">31</div></td>
-                        <td><div class="date-cell">1</div></td>
-                        <td><div class="date-cell">2</div></td>
-                        <td><div class="date-cell">3</div></td>
-                        <td><div class="date-cell">4</div></td>
-                        <td><div class="date-cell">5</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="date-cell">6</div></td>
-                        <td><div class="date-cell">7</div></td>
-                        <td><div class="date-cell">8</div></td>
-                        <td><div class="date-cell">9</div></td>
-                        <td><div class="date-cell selected">10</div></td>
-                        <td><div class="date-cell">11</div></td>
-                        <td><div class="date-cell">12</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="date-cell">13</div></td>
-                        <td><div class="date-cell">14</div></td>
-                        <td><div class="date-cell">15</div></td>
-                        <td><div class="date-cell">16</div></td>
-                        <td><div class="date-cell today">17</div></td>
-                        <td><div class="date-cell">18</div></td>
-                        <td><div class="date-cell">19</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="date-cell">20</div></td>
-                        <td><div class="date-cell">21</div></td>
-                        <td><div class="date-cell">22</div></td>
-                        <td><div class="date-cell">23</div></td>
-                        <td><div class="date-cell">24</div></td>
-                        <td><div class="date-cell">25</div></td>
-                        <td><div class="date-cell selected">26</div></td>
-                    </tr>
-                    <tr>
-                        <td><div class="date-cell">27</div></td>
-                        <td><div class="date-cell">28</div></td>
-                        <td><div class="date-cell">29</div></td>
-                        <td><div class="date-cell">30</div></td>
-                        <td><div class="date-cell other-month">1</div></td>
-                        <td><div class="date-cell other-month">2</div></td>
-                        <td><div class="date-cell other-month">3</div></td>
-                    </tr>
-                </tbody>
+                <tbody id="calendar-body"></tbody>
             </table>
-            <div class="end-time">8:00 AM</div>
+            <div class="end-time" id="calendar-end-time">8:00 AM</div>
         </div>
     </div>
-    <div th:replace="~{footer}"></div> <!-- Include footer.html -->
-    <script th:src="@{/js/script.js}"></script>
+
+    <div th:replace="~{footer}"></div>
+
+    <div id="auctionModal" class="modal">
+        <div class="modal-content">
+            <span class="modal-close" onclick="closeModal()">&times;</span>
+            <h2>Danh sách phiên đấu giá</h2>
+            <div id="auctionList"></div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let currentDate = new Date('2025-08-25T20:53:00+07:00'); // Cập nhật thời gian hiện tại: 08:53 PM, 25/08/2025
+        let currentMonth = currentDate.getMonth();
+        let currentYear = currentDate.getFullYear();
+
+        window.onload = () => {
+            const jwtToken = /*[[${jwtToken}]]*/ null; // Lấy từ flash attribute
+            if (jwtToken) {
+                sessionStorage.setItem('jwtToken', jwtToken);
+            }
+            generateCalendar(currentMonth, currentYear);
+        };
+
+        // Hàm tạo lịch động
+        function generateCalendar(month, year) {
+            const calendarBody = document.getElementById('calendar-body');
+            const monthYearDisplay = document.getElementById('calendar-month');
+            const months = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6', 
+                            'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            monthYearDisplay.textContent = `${months[month]} ${year}`;
+
+            const firstDay = new Date(year, month, 1).getDay();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            const today = currentDate.getDate();
+            const currentMonthYear = currentDate.getMonth() === month && currentDate.getFullYear() === year;
+
+            fetch('/admin/api/auctions/dates', {
+                headers: {
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(dates => {
+                console.log('Auction dates from API:', dates); // Debug log
+                const auctionDates = dates.map(date => date); // Giữ định dạng YYYY-MM-DD
+
+                let calendarHTML = '';
+                let date = 1;
+                let row = '<tr>';
+                for (let j = 0; j < firstDay; j++) {
+                    row += '<td><div class="date-cell other-month"></div></td>';
+                }
+                for (let j = firstDay; j < 7; j++) {
+                    if (date > daysInMonth) {
+                        row += '<td><div class="date-cell other-month"></div></td>';
+                    } else {
+                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                        const isToday = currentMonthYear && date === today;
+                        const isAuctionDay = auctionDates.includes(dateStr);
+                        const classes = `date-cell${isToday ? ' today' : ''}${isAuctionDay ? ' selected' : ''}`;
+                        row += `<td><div class="${classes}" onclick="showAuctions('${dateStr}')">${date}</div></td>`;
+                        date++;
+                    }
+                }
+                calendarHTML += row + '</tr>';
+                while (date <= daysInMonth) {
+                    row = '<tr>';
+                    for (let j = 0; j < 7; j++) {
+                        if (date > daysInMonth) {
+                            row += '<td><div class="date-cell other-month"></div></td>';
+                        } else {
+                            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                            const isToday = currentMonthYear && date === today;
+                            const isAuctionDay = auctionDates.includes(dateStr);
+                            const classes = `date-cell${isToday ? ' today' : ''}${isAuctionDay ? ' selected' : ''}`;
+                            row += `<td><div class="${classes}" onclick="showAuctions('${dateStr}')">${date}</div></td>`;
+                            date++;
+                        }
+                    }
+                    calendarHTML += row + '</tr>';
+                }
+                calendarBody.innerHTML = calendarHTML;
+
+                updateCountdown();
+            })
+            .catch(error => {
+                console.error('Error fetching auction dates:', error);
+                let calendarHTML = '';
+                let date = 1;
+                let row = '<tr>';
+                for (let j = 0; j < firstDay; j++) {
+                    row += '<td><div class="date-cell other-month"></div></td>';
+                }
+                for (let j = firstDay; j < 7; j++) {
+                    if (date > daysInMonth) {
+                        row += '<td><div class="date-cell other-month"></div></td>';
+                    } else {
+                        const isToday = currentMonthYear && date === today;
+                        const classes = `date-cell${isToday ? ' today' : ''}`;
+                        row += `<td><div class="${classes}" onclick="showAuctions('${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}')">${date}</div></td>`;
+                        date++;
+                    }
+                }
+                calendarHTML += row + '</tr>';
+                while (date <= daysInMonth) {
+                    row = '<tr>';
+                    for (let j = 0; j < 7; j++) {
+                        if (date > daysInMonth) {
+                            row += '<td><div class="date-cell other-month"></div></td>';
+                        } else {
+                            const isToday = currentMonthYear && date === today;
+                            const classes = `date-cell${isToday ? ' today' : ''}`;
+                            row += `<td><div class="${classes}" onclick="showAuctions('${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}')">${date}</div></td>`;
+                            date++;
+                        }
+                    }
+                    calendarHTML += row + '</tr>';
+                }
+                calendarBody.innerHTML = calendarHTML;
+            });
+        }
+
+        // Hàm hiển thị danh sách phiên đấu giá
+        function showAuctions(dateStr) {
+            console.log('Fetching auctions for date:', dateStr); // Debug log
+            fetch(`/admin/api/auctions/by-date?date=${encodeURIComponent(dateStr)}`, {
+                headers: {
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+                }
+                return response.json().then(data => {
+                    if (!Array.isArray(data)) {
+                        throw new Error('Invalid JSON data: expected an array, got ' + JSON.stringify(data));
+                    }
+                    return data;
+                });
+            })
+            .then(auctions => {
+                console.log('Auctions fetched:', auctions); // Debug log
+                const auctionList = document.getElementById('auctionList');
+                auctionList.innerHTML = '';
+                if (auctions.length > 0) {
+                    auctions.forEach(auction => {
+                        const item = document.createElement('div');
+                        item.className = 'auction-item';
+                        const role = /*[[${session.role}]]*/ 'USER'; // Lấy vai trò từ session
+                        const detailUrl = role === 'ADMIN' ? `/admin/edit-auction/${auction.id}` : `/admin/view-auction/${auction.id}`;
+                        item.innerHTML = `<strong>${auction.name || 'Chưa có tên'}</strong> (Trạng thái: ${auction.status || 'Chưa xác định'})<br>
+                            <a href="${detailUrl}" target="_blank">Xem chi tiết</a>`;
+                        auctionList.appendChild(item);
+                    });
+                } else {
+                    auctionList.innerHTML = '<div class="auction-item">Không có phiên đấu giá nào trong ngày này.</div>';
+                }
+                document.getElementById('auctionModal').style.display = 'block';
+            })
+            .catch(error => {
+                console.error('Error fetching auctions by date:', error);
+                document.getElementById('auctionList').innerHTML = `<div class="auction-item">Lỗi khi tải danh sách phiên đấu giá: ${error.message}</div>`;
+                document.getElementById('auctionModal').style.display = 'block';
+            });
+        }
+
+        // Hàm đóng modal
+        function closeModal() {
+            document.getElementById('auctionModal').style.display = 'none';
+        }
+
+        // Hàm cập nhật bộ đếm ngược
+        function updateCountdown() {
+            const now = new Date('2025-08-25T20:53:00+07:00');
+            fetch('/admin/api/auctions', {
+                headers: {
+                    'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then(auctions => {
+                console.log('All auctions fetched for countdown:', auctions);
+                const nextAuction = auctions
+                    .map(auction => ({
+                        dateTime: new Date(`${auction.auctionDate}T${auction.startTime}`),
+                        id: auction.id,
+                        name: auction.name
+                    }))
+                    .filter(auction => auction.dateTime > now)
+                    .sort((a, b) => a.dateTime - b.dateTime)[0];
+
+                if (nextAuction) {
+                    const countdownInterval = setInterval(() => {
+                        const now = new Date();
+                        const timeDiff = nextAuction.dateTime - now;
+                        if (timeDiff <= 0) {
+                            clearInterval(countdownInterval);
+                            document.getElementById('next-auction-time').textContent = 'Phiên đấu giá đang diễn ra!';
+                            return;
+                        }
+
+                        const days = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                        const hours = Math.floor((timeDiff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((timeDiff % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((timeDiff % (1000 * 60)) / 1000);
+
+                        document.getElementById('days').textContent = String(days).padStart(2, '0');
+                        document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+                        document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+                        document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+                        document.getElementById('next-auction-time').textContent = 
+                            `${nextAuction.name} - ${nextAuction.dateTime.toLocaleString('vi-VN', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })}`;
+                    }, 1000);
+                } else {
+                    document.getElementById('next-auction-time').textContent = 'Chưa có phiên đấu giá tiếp theo';
+                }
+            })
+            .catch(error => console.error('Error fetching auctions:', error));
+        }
+
+        // Hàm chuyển tháng trước
+        function prevMonth() {
+            currentMonth--;
+            if (currentMonth < 0) {
+                currentMonth = 11;
+                currentYear--;
+            }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        // Hàm chuyển tháng sau
+        function nextMonth() {
+            currentMonth++;
+            if (currentMonth > 11) {
+                currentMonth = 0;
+                currentYear++;
+            }
+            generateCalendar(currentMonth, currentYear);
+        }
+
+        // Hàm bắt đầu đấu giá (giả lập)
+        function startAuction() {
+            alert('Chức năng bắt đầu đấu giá đang được phát triển!');
+        }
+    </script>
 </body>
 </html>
