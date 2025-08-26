@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="vi" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Phòng Đấu Giá</title>
+    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.5.1/socket.io.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+    <!-- Connection status -->
+    <div id="connectionStatus" class="connection-status disconnected">
+        <span class="status-indicator"></span>
+        <span class="status-text">Đang kết nối...</span>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">H</div>
+            </div>
+            <nav class="nav-links">
+                <a th:href="@{/}">Trang chủ</a>
+                <a th:href="@{/calendar}">Lịch</a>
+                <a th:href="@{/user/auction-room}">Danh sách phiên đấu giá</a>
+                <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
+            </nav>
+            <div class="auth-buttons" th:unless="${session.jwtToken != null}">
+                <a th:href="@{/login}" class="btn btn-outline">Đăng nhập</a>
+                <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
+            </div>
+            <div th:if="${session.jwtToken != null}" class="user-info">
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName ?: session.username)}"></span>
+                <div class="user-stats">
+                    <span id="userBidCount">0 lượt đấu giá</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Auction Info Header -->
+        <div class="auction-header">
+            <h1 class="title" th:text="${auction.name} ?: 'Phiên Đấu Giá'"></h1>
+            <div class="auction-meta">
+                <p>📅 Ngày: <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                <p>⏰ Thời gian: <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
+                <p>📊 Trạng thái: <span th:class="'status-badge ' + ${#strings.toLowerCase(auction.status)}" th:text="${auction.status} ?: 'Chưa xác định'"></span></p>
+                <p>👥 Số người tham gia: <span id="totalParticipants">0</span></p>
+            </div>
+        </div>
+
+        <input type="hidden" id="auctionId" th:value="${auction.id}" />
+
+        <!-- Auction End Notification -->
+        <div id="auctionEndedBanner" class="auction-ended-banner" style="display: none;">
+            <h2>Phiên đấu giá đã kết thúc!</h2>
+            <p>Cảm ơn bạn đã tham gia. Kết quả cuối cùng được hiển thị bên dưới.</p>
+        </div>
+
+        <!-- Countdown Timer (visible only when active) -->
+        <div class="countdown-section" th:if="${auction.status.name() == 'ACTIVE'}">
+            <h3>Thời gian còn lại:</h3>
+            <div class="countdown-timer">
+                <div class="time-block">
+                    <span id="countdown-days">00</span>
+                    <label>Ngày</label>
+                </div>
+                <div class="time-block">
+                    <span id="countdown-hours">00</span>
+                    <label>Giờ</label>
+                </div>
+                <div class="time-block">
+                    <span id="countdown-minutes">00</span>
+                    <label>Phút</label>
+                </div>
+                <div class="time-block">
+                    <span id="countdown-seconds">00</span>
+                    <label>Giây</label>
+                </div>
+            </div>
+        </div>
+
+        <h2>Danh sách sản phẩm</h2>
+        <div class="grid">
+            <div th:if="${auction.products.isEmpty()}" class="empty-state">
+                <p>📦 Chưa có sản phẩm nào trong phiên đấu giá này.</p>
+            </div>
+            <div th:each="product : ${auction.products}" class="product-item" th:data-product-id="${product.id}">
+                <!-- Product Header -->
+                <div class="product-header">
+                    <h3 th:text="${product.name} ?: 'Chưa đặt tên'"></h3>
+                    <div class="product-status">
+                        <span th:class="'status-badge ' + ${#strings.toLowerCase(product.status)}" 
+                              th:text="${product.status}"></span>
+                    </div>
+                </div>
+
+                <!-- Product Image -->
+                <div class="product-image">
+                    <img th:src="${product.imageUrl ?: '/images/default-product.png'}" 
+                         alt="Ảnh sản phẩm" 
+                         loading="lazy" />
+                </div>
+
+                <!-- Product Info -->
+                <div class="product-info">
+                    <p class="description" th:text="${product.description} ?: 'Chưa có mô tả'"></p>
+                    <div class="price-info">
+                        <div class="price-row">
+                            <span class="label">Giá khởi điểm:</span>
+                            <span class="starting-price" th:text="${#numbers.formatInteger(product.startingPrice, 0, 'COMMA')} + 'đ'"></span>
+                        </div>
+                        <div class="price-row">
+                            <span class="label">Bước giá:</span>
+                            <span class="increment" th:text="${#numbers.formatInteger(product.minimumBidIncrement, 0, 'COMMA')} + 'đ'"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Current Price Display -->
+                <div class="current-price-section">
+                    <div class="current-price-card">
+                        <span class="label">Giá hiện tại</span>
+                        <span th:id="'currentPrice_' + ${product.id}" 
+                              class="current-price" 
+                              th:text="${product.currentPrice != null} ? ${#numbers.formatInteger(product.currentPrice, 0, 'COMMA')} + 'đ' : ${#numbers.formatInteger(product.startingPrice, 0, 'COMMA')} + 'đ'"
+                              th:data-starting-price="${product.startingPrice}"
+                              th:data-current-price="${product.currentPrice}">
+                        </span>
+                        <span th:id="'lastBidder_' + ${product.id}" 
+                              class="last-bidder" 
+                              th:text="${product.lastBidder != null} ? 'Đấu giá bởi: ' + ${product.lastBidder} : ''"></span>
+                    </div>
+                </div>
+
+                <!-- Winner Display (for completed products) -->
+                <div th:id="'winnerDisplay_' + ${product.id}" class="winner-display" style="display: none;">
+                    <div class="winner-card">
+                        <div class="trophy-icon">🏆</div>
+                        <h4>Người thắng cuộc</h4>
+                        <p class="winner-name" th:text="${product.winner != null} ? ${product.winner.username} : 'Không có người thắng'"></p>
+                        <p class="winning-amount" th:text="${product.currentPrice != null} ? ${#numbers.formatInteger(product.currentPrice, 0, 'COMMA')} + 'đ' : '0đ'"></p>
+                    </div>
+                </div>
+
+                <!-- Bid Section -->
+                <div class="bid-section">
+                    <!-- Active bidding interface -->
+                    <div th:if="${auction.status.name() == 'ACTIVE' and product.status.name() == 'ACTIVE'}" 
+                         th:id="'bidInterface_' + ${product.id}" class="bid-interface">
+                        <div class="bid-controls">
+                            <div class="input-group">
+                                <input type="number" 
+                                       th:id="'bidAmount_' + ${product.id}" 
+                                       placeholder="Nhập số tiền" 
+                                       step="1000" 
+                                       th:min="${product.currentPrice != null} ? ${product.currentPrice + product.minimumBidIncrement} : ${product.startingPrice + product.minimumBidIncrement}"
+                                       class="bid-input"
+                                       th:data-min-bid="${product.currentPrice != null} ? ${product.currentPrice + product.minimumBidIncrement} : ${product.startingPrice + product.minimumBidIncrement}" />
+                                <span class="input-suffix">đ</span>
+                            </div>
+                            <button class="auction-btn bid-button" 
+                                    th:data-product-id="${product.id}"
+                                    th:data-current-price="${product.currentPrice != null} ? ${product.currentPrice} : ${product.startingPrice}"
+                                    th:data-min-increment="${product.minimumBidIncrement}">
+                                <span class="btn-text">Đặt Giá</span>
+                                <div class="btn-spinner" style="display: none;"></div>
+                            </button>
+                        </div>
+                        <div class="bid-hints">
+                            <p class="bid-hint">
+                                💡 Giá tối thiểu: <span th:text="${product.currentPrice != null} ? ${#numbers.formatInteger(product.currentPrice + product.minimumBidIncrement, 0, 'COMMA')} + 'đ' : ${#numbers.formatInteger(product.startingPrice + product.minimumBidIncrement, 0, 'COMMA')} + 'đ'"></span>
+                            </p>
+                            <div class="quick-bid-buttons">
+                                <button type="button" class="quick-bid-btn" th:data-product-id="${product.id}" data-increment="1">+1 bước</button>
+                                <button type="button" class="quick-bid-btn" th:data-product-id="${product.id}" data-increment="2">+2 bước</button>
+                                <button type="button" class="quick-bid-btn" th:data-product-id="${product.id}" data-increment="5">+5 bước</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Inactive state message -->
+                    <div th:unless="${auction.status.name() == 'ACTIVE' and product.status.name() == 'ACTIVE'}" 
+                         class="inactive-product">
+                        <div th:if="${auction.status.name() != 'ACTIVE'}" class="inactive-message">
+                            <div class="inactive-icon">⏸️</div>
+                            <p>Phiên đấu giá chưa bắt đầu hoặc đã kết thúc</p>
+                            <small>Trạng thái: <span th:text="${auction.status}"></span></small>
+                        </div>
+                        <div th:if="${auction.status.name() == 'ACTIVE' and product.status.name() != 'ACTIVE'}" 
+                             class="inactive-message">
+                            <div class="inactive-icon">⏯️</div>
+                            <p>Sản phẩm chưa sẵn sàng đấu giá</p>
+                            <small>Trạng thái: <span th:text="${product.status}"></span></small>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bid History -->
+                <div class="bid-history">
+                    <div class="section-header">
+                        <h4>📜 Lịch sử đấu giá</h4>
+                        <span th:id="'bidCount_' + ${product.id}" 
+                              class="bid-count" 
+                              th:text="${product.bidCount != null} ? ${product.bidCount} + ' lượt' : '0 lượt'"></span>
+                    </div>
+                    <div class="history-container">
+                        <ul th:id="'bidHistory_' + ${product.id}" class="bid-history-list">
+                            <th:block th:if="${product.bidHistory == null or product.bidHistory.isEmpty()}">
+                                <li class="no-bids">Chưa có ai đấu giá</li>
+                            </th:block>
+                            <th:block th:each="bid : ${product.bidHistory}">
+                                <li>
+                                    <strong th:text="${bid.user.username}"></strong> - 
+                                    <span class="bid-amount" th:text="${#numbers.formatInteger(bid.amount, 0, 'COMMA')} + 'đ'"></span>
+                                    <small th:text="'(' + ${#temporals.format(bid.timestamp, 'HH:mm:ss dd/MM/yyyy')} + ')'"></small>
+                                </li>
+                            </th:block>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Real-time Stats -->
+                <div class="product-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Số lượt đấu giá</span>
+                        <span th:id="'totalBids_' + ${product.id}" 
+                              class="stat-value" 
+                              th:text="${product.bidCount != null} ? ${product.bidCount} : 0"></span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Người tham gia</span>
+                        <span th:id="'uniqueBidders_' + ${product.id}" 
+                              class="stat-value" 
+                              th:text="${product.uniqueBidders != null} ? ${product.uniqueBidders} : 0"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Global Participants Panel -->
+        <div class="participants-panel">
+            <div class="section-header">
+                <h3>👥 Người tham gia phiên đấu giá</h3>
+                <span id="participantCount" class="participant-count">0 người</span>
+            </div>
+            <div class="participants-container">
+                <ul id="globalParticipantsList" class="participants-list">
+                    <li th:each="participant : ${participants}" th:text="${participant}"></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <div th:replace="~{footer :: footer}"></div>
+
+    <!-- Enhanced auction.js with better error handling -->
+    <script th:inline="javascript">
+        // Global configuration
+        window.auctionConfig = {
+            auctionId: /*[[${auction.id}]]*/ null,
+            auctionStatus: /*[[${auction.status}]]*/ 'PENDING',
+            endTime: /*[[${auction.auctionDate}]]*/ null + 'T' + /*[[${auction.endTime}]]*/ null
+        };
+
+        // Set auth data with error handling
+        (function() {
+            try {
+                if (typeof(Storage) !== "undefined") {
+                    const serverToken = /*[[${session.jwtToken}]]*/ null;
+                    const serverUsername = /*[[${session.username}]]*/ null;
+                    
+                    if (serverToken && serverToken !== 'null') {
+                        localStorage.setItem('jwtToken', serverToken);
+                        console.log('JWT token set from server session');
+                    }
+                    if (serverUsername && serverUsername !== 'null') {
+                        localStorage.setItem('username', serverUsername);
+                        console.log('Username set from server session:', serverUsername);
+                    }
+                }
+            } catch (error) {
+                console.error('Error setting auth data:', error);
+            }
+        })();
+
+        // Initialize quick bid buttons and input formatters
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing enhanced features...');
+            
+            // Hide loading overlay after 2 seconds
+            setTimeout(() => {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) overlay.style.display = 'none';
+            }, 2000);
+            
+            // Initialize quick bid buttons with proper error handling
+            const quickBidButtons = document.querySelectorAll('.quick-bid-btn');
+            console.log('Found quick bid buttons:', quickBidButtons.length);
+            
+            quickBidButtons.forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    const productId = this.getAttribute('data-product-id');
+                    const increment = parseInt(this.getAttribute('data-increment') || '1');
+                    
+                    console.log('Quick bid clicked:', {productId, increment});
+                    
+                    if (!productId) {
+                        console.error('No product ID found for quick bid button');
+                        return;
+                    }
+                    
+                    const bidInput = document.getElementById('bidAmount_' + productId);
+                    const currentPriceElement = document.getElementById('currentPrice_' + productId);
+                    
+                    if (bidInput && currentPriceElement) {
+                        try {
+                            const currentPriceText = currentPriceElement.textContent || currentPriceElement.innerText;
+                            const currentPrice = parseFloat(currentPriceText.replace(/[^\d]/g, ''));
+                            const minBid = parseFloat(bidInput.getAttribute('data-min-bid') || '0');
+                            const stepSize = minBid - currentPrice;
+                            
+                            const suggestedBid = currentPrice + (stepSize * increment);
+                            
+                            bidInput.value = Math.floor(suggestedBid).toLocaleString('vi-VN');
+                            bidInput.focus();
+                            
+                            console.log('Quick bid set:', {currentPrice, suggestedBid});
+                        } catch (error) {
+                            console.error('Error calculating quick bid:', error);
+                        }
+                    } else {
+                        console.error('Bid input or price element not found for product:', productId);
+                    }
+                });
+            });
+            
+            // Initialize input formatters
+            const bidInputs = document.querySelectorAll('.bid-input');
+            console.log('Found bid inputs:', bidInputs.length);
+            
+            bidInputs.forEach(input => {
+                input.addEventListener('input', function(e) {
+                    let value = this.value.replace(/[^\d]/g, '');
+                    if (value && value.length > 0) {
+                        const numValue = parseInt(value);
+                        if (!isNaN(numValue)) {
+                            this.value = numValue.toString();
+                        }
+                    }
+                });
+                
+                input.addEventListener('blur', function(e) {
+                    let value = this.value.replace(/[^\d]/g, '');
+                    if (value && value.length > 0) {
+                        const numValue = parseInt(value);
+                        if (!isNaN(numValue)) {
+                            this.value = numValue.toLocaleString('vi-VN');
+                        }
+                    }
+                });
+                
+                input.addEventListener('focus', function(e) {
+                    this.value = this.value.replace(/[^\d]/g, '');
+                });
+            });
+            
+            console.log('Enhanced features initialized successfully');
+        });
+    </script>
+
+    <!-- Load auction.js -->
+    <script th:src="@{/js/auction.js}"></script>
+
+    <style>
+        /* Enhanced styles with animations */
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+        }
+
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid white;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 16px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes priceUpdate {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); background-color: #10b981; color: white; }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes slideDown {
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        /* Connection Status */
+        .connection-status {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            z-index: 1000;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ef4444;
+        }
+
+        .connection-status.connected .status-indicator {
+            background: #22c55e;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        /* Rest of the CSS remains the same as previous version but truncated for space */
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .auction-header { background: white; padding: 24px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+        .auction-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-top: 16px; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .status-badge.active { background-color: #10b981; color: white; }
+        .status-badge.pending { background-color: #fbbf24; color: #92400e; }
+        .status-badge.completed { background-color: #6b7280; color: white; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(400px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .product-item { background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07); transition: all 0.3s ease; }
+        .product-item:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15); }
+        .current-price { font-size: 28px; font-weight: 700; color: #059669; }
+        .bid-controls { display: flex; gap: 12px; margin-bottom: 16px; }
+        .bid-input { flex: 1; padding: 12px 16px; border: 2px solid #e5e7eb; border-radius: 8px; font-size: 16px; }
+        .auction-btn { background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%); color: white; padding: 12px 24px; border: none; border-radius: 8px; cursor: pointer; }
+        .quick-bid-btn { background: #f3f4f6; border: 1px solid #d1d5db; padding: 6px 12px; border-radius: 6px; font-size: 11px; cursor: pointer; }
+        .winner-display { padding: 20px; background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: white; text-align: center; }
+        .trophy-icon { font-size: 32px; margin-bottom: 12px; }
+    </style>
+</body>
+</html>

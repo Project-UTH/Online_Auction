@@ -1,11 +1,15 @@
 package com.example.online_auction.service;
 
+import com.corundumstudio.socketio.SocketIOServer;
 import com.example.online_auction.dto.ProductCreateDTO;
 import com.example.online_auction.entity.Auction;
+import com.example.online_auction.entity.Bid;
 import com.example.online_auction.entity.Product;
 import com.example.online_auction.repository.AuctionRepository;
+import com.example.online_auction.repository.BidRepository;
 import com.example.online_auction.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,10 +19,21 @@ import java.util.List;
 
 @Service
 public class ProductService {
+
     @Autowired
     private ProductRepository productRepository;
+
     @Autowired
     private AuctionRepository auctionRepository;
+
+    @Autowired
+    private BidRepository bidRepository;
+
+    @Autowired
+    private SocketIOServer socketIOServer;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate; // Add RedisTemplate
 
     @Transactional
     @Scheduled(fixedRate = 30000) // Chạy mỗi 30 giây
@@ -35,13 +50,36 @@ public class ProductService {
             LocalDateTime startDateTime = auction.getAuctionDate().atTime(product.getStartTime());
             LocalDateTime endDateTime = auction.getAuctionDate().atTime(product.getEndTime());
             Product.Status newStatus = product.getStatus();
+
             if (now.isBefore(startDateTime)) {
                 newStatus = Product.Status.PENDING;
             } else if (now.isAfter(endDateTime)) {
                 newStatus = Product.Status.COMPLETED;
+                if (product.getStatus() != Product.Status.COMPLETED) {
+                    Bid highestBid = bidRepository.findTopByProductOrderByAmountDesc(product);
+                    if (highestBid != null) {
+                        product.setWinner(highestBid.getUser());
+                        String productKey = "auction:" + auction.getId() + ":product_highest_bid:" + product.getId();
+                        redisTemplate.opsForValue().set(productKey, highestBid.getAmount());
+                    } else {
+                        product.setWinner(null);
+                    }
+                    productRepository.save(product);
+                    String auctionId = String.valueOf(auction.getId());
+                    socketIOServer.getRoomOperations(auctionId).sendEvent("productEnded", 
+                        new BidService.ProductEndedMessage(
+                            product.getId(),
+                            highestBid != null ? highestBid.getUser().getUsername() : null,
+                            highestBid != null ? highestBid.getAmount() : null
+                        ));
+                    System.out.println("✅ Product " + product.getId() + " ended. Winner: " + 
+                        (highestBid != null ? highestBid.getUser().getUsername() : "null") + 
+                        ", Amount: " + (highestBid != null ? highestBid.getAmount() : "null"));
+                }
             } else {
                 newStatus = Product.Status.ACTIVE;
             }
+
             if (newStatus != product.getStatus()) {
                 product.setStatus(newStatus);
                 productRepository.save(product);

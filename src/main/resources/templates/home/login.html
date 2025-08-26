@@ -35,21 +35,23 @@
         </div>
         <div class="action-container">
             <form action="/login" method="post" th:action="@{/login}" th:object="${loginDTO}">
-            <input type="text" th:field="*{username}" placeholder="Tên đăng nhập" required class="form-input">
-            <input type="password" th:field="*{password}" placeholder="Mật khẩu" required class="form-input">
-            <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-            <button type="submit" class="auction-btn">Đăng Nhập</button>
-            <p th:if="${error}" class="error" th:text="${error}"></p>
-            <p th:if="${param.success}" class="success" th:text="${param.success}"></p> <!-- Hiển thị flash message -->
-        </form>
+                <input type="text" th:field="*{username}" placeholder="Tên đăng nhập" required class="form-input">
+                <input type="password" th:field="*{password}" placeholder="Mật khẩu" required class="form-input">
+                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+                <button type="submit" class="auction-btn">Đăng Nhập</button>
+                <p th:if="${error}" class="error" th:text="${error}"></p>
+                <p th:if="${success}" class="success" th:text="${success}"></p>
+            </form>
             <p class="fee-info">Chưa có tài khoản? <a th:href="@{/register}" class="next-auction-highlight">Đăng ký</a></p>
             <div class="social-icons" style="margin-top: 20px;">
                 <a href="#" class="social-icon">📧</a>
                 <a href="#" class="social-icon">📱</a>
             </div>
+            <!-- Render script từ flash attribute -->
+            <div th:if="${script}" th:utext="${script}"></div>
         </div>
     </div>
-    <div th:replace="~{footer}"></div> <!-- Include footer.html -->
+    <div th:replace="~{footer}"></div>
     <script th:src="@{/js/script.js}"></script>
 </body>
 </html>

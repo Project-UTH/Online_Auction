@@ -14,4 +14,5 @@ public class ProductCreateDTO {
     private MultipartFile imageFile;
     private LocalTime startTime; // Thay đổi thành LocalTime
     private LocalTime endTime; // Thay đổi thành LocalTime
+    private Double currentPrice;
 }

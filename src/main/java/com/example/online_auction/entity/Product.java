@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalTime;
+import java.util.List;
 
 @Entity
 @Table(name = "products")
@@ -53,11 +54,26 @@ public class Product {
     @JsonBackReference
     private Auction auction;
 
+    // Transient fields for rendering
+    @Transient
+    private Double currentPrice;
+
+    @Transient
+    private String lastBidder;
+
+    @Transient
+    private List<Bid> bidHistory;
+
+    @Transient
+    private Long bidCount; // Number of bids
+
+    @Transient
+    private Long uniqueBidders; // Number of unique bidders
+
     public enum Status {
         PENDING, ACTIVE, COMPLETED, CANCELLED
     }
 
-    // Tùy chỉnh toString để tránh vòng lặp
     @Override
     public String toString() {
         return "Product{" +
@@ -70,6 +86,12 @@ public class Product {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", status=" + status +
+                ", winner=" + (winner != null ? winner.getUsername() : "null") +
+                ", currentPrice=" + currentPrice +
+                ", lastBidder='" + lastBidder + '\'' +
+                ", bidHistorySize=" + (bidHistory != null ? bidHistory.size() : 0) +
+                ", bidCount=" + bidCount +
+                ", uniqueBidders=" + uniqueBidders +
                 '}';
     }
 }

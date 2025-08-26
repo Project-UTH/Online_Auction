@@ -58,7 +58,7 @@ public class HomeController {
         return "home/login"; // Trả về login.html
     }
 
-    // Xử lý đăng nhập - THÊM USERNAME VÀO SESSION
+    // Xử lý đăng nhập - THÊM USERNAME VÀ TOKEN VÀO localStorage
     @PostMapping("/login")
     public String loginSubmit(@Valid @ModelAttribute LoginDTO loginDTO, BindingResult bindingResult, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
         System.out.println("Login attempt for: " + loginDTO.getUsername());
@@ -71,12 +71,17 @@ public class HomeController {
             JwtResponseDTO response = authService.login(loginDTO);
             session.setAttribute("jwtToken", response.getToken());
             session.setAttribute("role", response.getRole());
-            // THÊM DÒNG NÀY - lưu username để AuctionController dùng
-            session.setAttribute("username", loginDTO.getUsername());
+            session.setAttribute("username", loginDTO.getUsername()); // Lưu username vào session
             User user = authService.findUserByUsername(loginDTO.getUsername());
             session.setAttribute("displayName", user.getDisplayName());
-            // Lưu token vào flash attribute để JavaScript lấy
-            redirectAttributes.addFlashAttribute("jwtToken", response.getToken());
+
+            // Thêm script để lưu vào localStorage qua redirect
+            String script = String.format(
+                "<script>localStorage.setItem('jwtToken', '%s'); localStorage.setItem('username', '%s');</script>",
+                response.getToken().replace("'", "\\'"), loginDTO.getUsername().replace("'", "\\'")
+            );
+            redirectAttributes.addFlashAttribute("script", script);
+
             System.out.println("Login successful, redirecting to /");
             return "redirect:/"; // Chuyển về trang chủ sau khi đăng nhập
         } catch (Exception e) {
@@ -120,6 +125,29 @@ public class HomeController {
     @GetMapping("/logout")
     public String logout(HttpSession session) {
         session.invalidate();
+        // Xóa token và username khỏi localStorage khi logout
+        String script = "<script>localStorage.removeItem('jwtToken'); localStorage.removeItem('username');</script>";
+        RedirectAttributes redirectAttrs = RedirectAttributesHolder.getCurrentRedirectAttributes();
+        if (redirectAttrs != null) {
+            redirectAttrs.addFlashAttribute("script", script);
+        }
         return "redirect:/login";
+    }
+
+    // Holder class để truy cập RedirectAttributes (nếu cần)
+    private static class RedirectAttributesHolder {
+        private static ThreadLocal<RedirectAttributes> redirectAttributes = new ThreadLocal<>();
+
+        public static void setRedirectAttributes(RedirectAttributes attrs) {
+            redirectAttributes.set(attrs);
+        }
+
+        public static RedirectAttributes getCurrentRedirectAttributes() {
+            return redirectAttributes.get();
+        }
+
+        public static void clear() {
+            redirectAttributes.remove();
+        }
     }
 }

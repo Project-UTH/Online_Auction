@@ -1,10 +1,11 @@
-// src/main/java/com/example/online_auction/config/WebSocketEventConfigurer.java (Class mới)
+// src/main/java/com/example/online_auction/config/WebSocketEventConfigurer.java (Cập nhật để hỗ trợ multi-user)
 package com.example.online_auction.config;
 
 import com.corundumstudio.socketio.AckRequest;
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.example.online_auction.dto.BidDTO;
+import com.example.online_auction.service.AuctionRoomService; // Sử dụng service mới
 import com.example.online_auction.service.BidService;
 import com.example.online_auction.service.CustomUserDetailsService;
 import com.example.online_auction.util.JwtUtil;
@@ -21,6 +22,9 @@ public class WebSocketEventConfigurer {
 
     @Autowired
     private BidService bidService;
+
+    @Autowired
+    private AuctionRoomService auctionRoomService; // Service mới cho room ops
 
     @Autowired
     private CustomUserDetailsService userDetailsService;
@@ -45,7 +49,7 @@ public class WebSocketEventConfigurer {
                     if (jwtUtil.validateToken(token, userDetails)) {
                         client.set("username", username);
                         client.joinRoom(auctionId);
-                        bidService.joinAuction(auctionId, username);
+                        auctionRoomService.joinAuctionRoom(auctionId, username); // Sử dụng service mới
                         System.out.println("User " + username + " joined auction " + auctionId);
                         return;
                     }
@@ -61,7 +65,7 @@ public class WebSocketEventConfigurer {
             String auctionId = client.getHandshakeData().getSingleUrlParam("auctionId");
             String username = (String) client.get("username");
             if (auctionId != null && username != null) {
-                bidService.leaveAuction(auctionId, username);
+                auctionRoomService.leaveAuctionRoom(auctionId, username); // Sử dụng service mới
             }
             System.out.println("Client disconnected: " + client.getSessionId());
         });

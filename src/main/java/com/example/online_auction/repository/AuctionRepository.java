@@ -1,6 +1,7 @@
 package com.example.online_auction.repository;
 
 import com.example.online_auction.entity.Auction;
+import com.example.online_auction.entity.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,6 +30,12 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
     @Query("SELECT a FROM Auction a ORDER BY a.auctionDate ASC, a.startTime ASC")
     List<Auction> findAllOrderByDateAndTime();
 
+    @Query("SELECT a FROM Auction a JOIN FETCH a.products WHERE a.status = 'ACTIVE'")
+    List<Auction> findAllWithProducts();
+
+    @Query("SELECT a FROM Auction a JOIN FETCH a.products WHERE a.id = ?1")
+    Auction findByIdWithProducts(Long id);
+
     // Tìm các phiên đấu giá trong tương lai
     @Query("SELECT a FROM Auction a WHERE a.auctionDate > :currentDate OR " +
            "(a.auctionDate = :currentDate AND a.startTime > :currentTime) " +
@@ -38,6 +45,10 @@ public interface AuctionRepository extends JpaRepository<Auction, Long> {
 
     // Tìm các phiên đấu giá theo trạng thái
     List<Auction> findByStatus(Auction.Status status);
+
+    // Thêm nếu cần
+    @Query("SELECT p FROM Product p WHERE p.auction.id = ?1")
+    List<Product> findByAuctionId(Long auctionId);
 
     // Tìm các phiên đấu giá theo khoảng thời gian
     @Query("SELECT a FROM Auction a WHERE a.auctionDate BETWEEN :startDate AND :endDate " +

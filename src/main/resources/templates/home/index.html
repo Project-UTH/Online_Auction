@@ -132,6 +132,7 @@
             <div class="end-time" id="calendar-end-time">8:00 AM</div>
         </div>
     </div>
+    <div th:if="${script}" th:utext="${script}"></div>
 
     <div th:replace="~{footer}"></div>
 
@@ -386,7 +387,7 @@
 
         // Hàm bắt đầu đấu giá (giả lập)
         function startAuction() {
-            alert('Chức năng bắt đầu đấu giá đang được phát triển!');
+            window.location.href = '/user/auction-room'; // Chuyển đến trang danh sách phiên đấu giá
         }
     </script>
 </body>

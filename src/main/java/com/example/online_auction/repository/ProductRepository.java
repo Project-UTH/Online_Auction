@@ -11,6 +11,9 @@ import java.util.List;
 
 @Repository
 public interface ProductRepository extends JpaRepository<Product, Long> {
+       // Thêm nếu cần
+    @Query("SELECT p FROM Product p WHERE p.auction.id = ?1")
+    List<Product> findByAuctionId(Long auctionId);
 
     @Query("SELECT p FROM Product p WHERE p.auction.id = :auctionId AND p.id != :id " +
            "AND ((p.startTime < :endTime AND p.endTime > :startTime) OR " +

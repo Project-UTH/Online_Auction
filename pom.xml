@@ -28,7 +28,7 @@
     </scm>
     <properties>
         <java.version>21</java.version>
-        <netty-socketio.version>2.0.3</netty-socketio.version> <!-- Cập nhật phiên bản mới hơn -->
+        <netty-socketio.version>2.0.3</netty-socketio.version> <!-- Cập nhật lên phiên bản mới nhất -->
     </properties>
     <dependencies>
         <!-- Spring Boot Starters -->
@@ -39,6 +39,12 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <!-- Loại bỏ javax.annotation-api, giữ jakarta.annotation-api -->
+        <dependency>
+            <groupId>jakarta.annotation</groupId>
+            <artifactId>jakarta.annotation-api</artifactId>
+            <version>2.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -96,7 +102,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Jackson (đảm bảo rõ ràng) -->
+        <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
@@ -108,11 +114,6 @@
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
-        </dependency>
-        <dependency>
-            <groupId>jakarta.annotation</groupId>
-            <artifactId>jakarta.annotation-api</artifactId>
-            <version>2.1.1</version>
         </dependency>
 
         <!-- Lombok -->
