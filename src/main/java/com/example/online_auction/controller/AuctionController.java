@@ -200,6 +200,7 @@ public class AuctionController {
     }
 
     // API để lấy danh sách ngày có phiên đấu giá
+    @SuppressWarnings("null")
     @GetMapping("/api/auctions/dates")
     public ResponseEntity<List<String>> getAuctionDates() {
         List<LocalDate> dates = auctionService.getAuctionDates();
