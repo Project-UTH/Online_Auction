@@ -14,7 +14,6 @@
             </div>
             <nav class="nav-links">
                 <a th:href="@{/}">Trang chủ</a>
-                <a th:href="@{/calendar}">Lịch</a>
                 <a th:href="@{/login}" th:if="${session.jwtToken == null}">Đăng nhập</a>
                 <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
             </nav>

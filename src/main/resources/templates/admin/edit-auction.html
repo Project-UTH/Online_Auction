@@ -3,10 +3,293 @@
 <head>
     <meta charset="UTF-8">
     <title>Chỉnh Sửa Phiên Đấu Giá</title>
-    <link th:href="@{/css/style.css}" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-outline {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-info {
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 16px 20px;
+        }
+
+        .title {
+    font-size: 2.5rem;
+    font-weight: 700;
+    background: linear-gradient(135deg, #ff7e5f, #feb47b); /* cam - hồng */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+
+        .product-grid {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .product-grid h2 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.75rem;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .product-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.3s ease;
+        }
+
+        .product-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .product-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-item p {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .product-item strong {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .add-product {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 2px dashed rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            min-height: 150px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .add-btn {
+            font-size: 1.5rem;
+            color: #667eea;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .add-btn:hover {
+            color: #764ba2;
+        }
+
+        .auction-btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    border: 2px solid #000; /* thêm viền đen */
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    margin-top: 0.75rem;
+}
+
+
+        .auction-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .alert {
+            padding: 0.75rem;
+            margin-bottom: 0.75rem;
+            font-size: 0.85rem;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .alert-success {
+            color: #155724;
+            background-color: #d4edda;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            color: #721c24;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                padding: 0 1rem;
+            }
+            .nav-links {
+                display: none;
+            }
+            .title {
+                font-size: 2rem;
+            }
+            .container {
+                padding: 20px 12px;
+            }
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        .interaction-box {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(0,0,0,0.1);
+    border-radius: 16px;
+    padding: 2rem;
+    margin-top: 1.5rem;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+    </style>
 </head>
 <body>
-    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <div class="logo">
@@ -14,7 +297,6 @@
             </div>
             <nav class="nav-links">
                 <a th:href="@{/}">Trang chủ</a>
-                <a th:href="@{/calendar}">Lịch</a>
                 <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
             </nav>
             <div class="auth-buttons" th:unless="${session.jwtToken != null}">
@@ -27,103 +309,32 @@
         </div>
     </header>
 
-    <div class="container">
-        <h1 class="title">Chỉnh Sửa Phiên Đấu Giá: <span th:text="${auction.name}"></span></h1>
-        <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
-        <div th:if="${error}" class="alert alert-error" th:text="${error}"></div>
-        
-        <div class="product-grid">
-            <h2>Danh Sách Sản Phẩm</h2>
-            <div class="grid">
-                <!-- Hiển thị các sản phẩm hiện có -->
-                <div th:each="product : ${products}" class="product-item">
-                    <img th:src="${product.imageUrl}" alt="Product" th:if="${product.imageUrl != null}">
-                    <p><strong>Tên:</strong> <span th:text="${product.name}"></span></p>
-                    <p><strong>Giá khởi điểm:</strong> <span th:text="'$' + ${product.startingPrice}"></span></p>
-                    <p><strong>Tăng giá tối thiểu:</strong> <span th:text="'$' + ${product.minimumBidIncrement}"></span></p>
-                    <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
-                    <p><strong>Giờ:</strong> <span th:text="${#temporals.format(product.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(product.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
-                </div>
-                <!-- Ô "+" để thêm sản phẩm mới -->
-                <div class="add-product">
-                    <a th:href="@{/admin/add-product/{id}(id=${auction.id})}" class="add-btn">+</a>
-                </div>
+    <div class="interaction-box">
+    <div class="product-grid">
+        <h2>Danh Sách Sản Phẩm</h2>
+        <div class="grid">
+            <!-- Hiển thị các sản phẩm hiện có -->
+            <div th:each="product : ${products}" class="product-item">
+                <img th:src="${product.imageUrl}" alt="Product" th:if="${product.imageUrl != null}">
+                <p><strong>Tên:</strong> <span th:text="${product.name}"></span></p>
+                <p><strong>Giá khởi điểm:</strong> <span th:text="'$' + ${product.startingPrice}"></span></p>
+                <p><strong>Tăng giá tối thiểu:</strong> <span th:text="'$' + ${product.minimumBidIncrement}"></span></p>
+                <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+                <p><strong>Giờ:</strong> <span th:text="${#temporals.format(product.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(product.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
             </div>
-            <!-- Nút Hoàn thành -->
-            <form th:action="@{/admin/complete-auction/{id}(id=${auction.id})}" method="post">
-                <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-                <button type="submit" class="auction-btn" style="margin-top: 20px;">Hoàn Thành</button>
-            </form>
+            <!-- Ô "+" để thêm sản phẩm mới -->
+            <div class="add-product">
+                <a th:href="@{/admin/add-product/{id}(id=${auction.id})}" class="add-btn">+</a>
+            </div>
         </div>
     </div>
+    <!-- Nút Hoàn thành -->
+    <form th:action="@{/admin/complete-auction/{id}(id=${auction.id})}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <button type="submit" class="auction-btn">Hoàn Thành</button>
+    </form>
+</div>
 
-    <!-- Footer -->
-    <div th:replace="~{footer :: footer}"></div>
 
-    <style>
-        .product-item {
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            padding: 15px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-        .product-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(243, 156, 18, 0.3);
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-        .add-product {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border: 2px dashed #ddd;
-            border-radius: 8px;
-        }
-        .add-btn {
-            font-size: 24px;
-            text-decoration: none;
-            color: #3b82f6;
-            padding: 20px;
-        }
-        .add-btn:hover {
-            color: #2563eb;
-        }
-        .auction-btn {
-            background: #3b82f6;
-            color: white;
-            padding: 8px 16px;
-            border: none;
-            border-radius: 6px;
-            font-size: 14px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .auction-btn:hover {
-            background: #2563eb;
-            transform: translateY(-1px);
-        }
-        .alert-error {
-            color: #721c24;
-            background-color: #f8d7da;
-            border-color: #f5c6cb;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-        .alert-success {
-            color: #155724;
-            background-color: #d4edda;
-            border-color: #c3e6cb;
-            padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 4px;
-        }
-    </style>
 </body>
 </html>

@@ -105,4 +105,26 @@ public class ProductService {
 
         return productRepository.save(product);
     }
+    public List<Product> getWonProductsByUsername(String username) {
+        List<Product> products = productRepository.findByWinnerUsernameAndStatus(username, Product.Status.COMPLETED);
+        for (Product product : products) {
+            List<Bid> bids = bidRepository.findByProductOrderByTimestampDesc(product);
+            if (!bids.isEmpty()) {
+                product.setCurrentPrice(bids.get(0).getAmount());
+                product.setLastBidder(bids.get(0).getUser().getUsername());
+                product.setBidHistory(bids);
+            } else {
+                product.setCurrentPrice(product.getStartingPrice());
+                product.setLastBidder(null);
+                product.setBidHistory(List.of());
+            }
+            product.setBidCount(bidRepository.countByProduct(product));
+            long uniqueBidders = bids.stream()
+                                     .map(bid -> bid.getUser().getId())
+                                     .distinct()
+                                     .count();
+            product.setUniqueBidders(uniqueBidders);
+        }
+        return products;
+    }
 }

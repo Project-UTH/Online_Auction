@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HammerX - Xem Chi Tiết Phiên Đấu Giá</title>
+    <title>HammerX - Giỏ Hàng</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link th:href="@{/css/style.css}" rel="stylesheet">
     <style>
         * {
             margin: 0;
@@ -126,10 +127,10 @@
             padding: 40px 16px 20px;
         }
 
-        .title {
+        .cart-title {
             font-size: 2.5rem;
             font-weight: 700;
-            background: linear-gradient(135deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -137,32 +138,110 @@
             text-align: center;
         }
 
-        .auction-details {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 8px;
-            padding: 1.5rem;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+        .cart-grid {
+            display: flex;
+            flex-direction: row;
+            overflow-x: auto;
+            gap: 1rem;
             margin-bottom: 1rem;
         }
 
-        .auction-details h2 {
-            font-size: 1.5rem;
-            font-weight: 600;
-            margin-bottom: 0.75rem;
-            color: #333;
+        .cart-item {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+            transition: all 0.3s ease;
+            min-width: 400px;
+            flex-shrink: 0;
         }
 
-        .auction-details p {
-            font-size: 0.9rem;
+        .cart-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .cart-item img {
+            max-width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+            margin: 0 auto;
+            border-radius: 8px;
+            margin-bottom: 0.75rem;
+        }
+
+        .cart-item-details {
+            margin-bottom: 0.75rem;
+        }
+
+        .cart-item-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-description {
+            font-size: 0.85rem;
             color: #666;
             margin-bottom: 0.5rem;
         }
 
-        .auction-details p strong {
-            color: #333;
+        .cart-item-price {
+            margin-bottom: 0.5rem;
+        }
+
+        .cart-item-price .label {
             font-weight: 600;
+            color: #333;
+        }
+
+        .cart-item-price span {
+            font-size: 0.85rem;
+            color: #666;
+        }
+
+        .cart-item-stats {
+            display: flex;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .stat-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            display: block;
+        }
+
+        .stat-value {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #64748b;
+            font-size: 1rem;
         }
 
         .status-badge {
@@ -189,98 +268,6 @@
             color: white;
         }
 
-        .status-badge.cancelled {
-            background-color: #e53e3e;
-            color: white;
-        }
-
-        .product-list {
-            margin-top: 1rem;
-        }
-
-        .product-list h3 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.75rem;
-        }
-
-        .product-grid {
-            display: flex;
-            flex-direction: row;
-            overflow-x: auto;
-            gap: 1rem;
-            margin-bottom: 1rem;
-        }
-
-        .product-item {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            border-radius: 8px;
-            padding: 1rem;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
-            transition: all 0.3s ease;
-            min-width: 400px;
-            flex-shrink: 0;
-        }
-
-        .product-item:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
-        }
-
-        .product-item img {
-            max-width: 100%;
-            height: 200px;
-            object-fit: cover;
-            display: block;
-            margin: 0 auto;
-            border-radius: 8px;
-            margin-bottom: 0.75rem;
-        }
-
-        .product-item p {
-            font-size: 0.85rem;
-            color: #666;
-            margin-bottom: 0.25rem;
-        }
-
-        .product-item p strong {
-            color: #333;
-            font-weight: 600;
-        }
-
-        .back-btn {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 0.75rem 1.5rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            font-weight: 500;
-            text-decoration: none;
-            display: inline-block;
-            transition: all 0.3s ease;
-            margin-top: 1rem;
-        }
-
-        .back-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 1rem;
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(20px);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: #64748b;
-            font-size: 1rem;
-        }
-
         @media (max-width: 768px) {
             .header-content {
                 padding: 0 1rem;
@@ -288,16 +275,13 @@
             .nav-links {
                 display: none;
             }
-            .title {
+            .cart-title {
                 font-size: 2rem;
             }
             .container {
                 padding: 20px 12px;
             }
-            .auction-details {
-                padding: 1rem;
-            }
-            .product-grid {
+            .cart-grid {
                 flex-direction: column;
             }
         }
@@ -311,7 +295,6 @@
             </div>
             <nav class="nav-links">
                 <a th:href="@{/}">Trang chủ</a>
-                <a th:href="@{/calendar}">Lịch</a>
                 <a th:href="@{/cart}">Giỏ hàng</a>
                 <a th:href="@{/login}" th:if="${session.jwtToken == null}">Đăng nhập</a>
                 <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
@@ -327,33 +310,29 @@
     </header>
 
     <div class="container">
-        <h1 class="title" th:text="${auction.name} + ' - Chi Tiết Phiên Đấu Giá'"></h1>
-        <div class="auction-details">
-            <h2>Thông tin phiên đấu giá</h2>
-            <p><strong>Ngày:</strong> <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
-            <p><strong>Thời gian:</strong> <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
-            <p><strong>Trạng thái:</strong> <span th:class="'status-badge ' + ${#strings.toLowerCase(auction.status)}" th:text="${auction.status} ?: 'Chưa xác định'"></span></p>
-
-            <div class="product-list">
-                <h3>Danh sách sản phẩm</h3>
-                <div class="product-grid">
-                    <div th:if="${#lists.isEmpty(auction.products)}" class="empty-state">
-                        Không có sản phẩm nào trong phiên đấu giá này.
+        <h1 class="cart-title">Giỏ Hàng Của Bạn</h1>
+        <div class="cart-grid">
+            <div th:if="${wonProducts.size() == 0}" class="cart-empty">Giỏ hàng của bạn đang trống.</div>
+            <div th:each="product : ${wonProducts}" class="cart-item">
+                <img th:src="${product.imageUrl} ?: '/default-image.jpg'" th:alt="${product.name}">
+                <div class="cart-item-details">
+                    <div class="cart-item-name" th:text="${product.name} ?: 'Chưa đặt tên'"></div>
+                    <div class="cart-item-description" th:text="${product.description} ?: 'Chưa có mô tả'"></div>
+                    <div class="cart-item-price">
+                        <span class="label">Giá khởi điểm:</span>
+                        <span th:text="${#numbers.formatInteger(product.startingPrice, 0, 'COMMA')} + ' đ'"></span>
                     </div>
-                    <div th:each="product : ${auction.products}" class="product-item">
-                        <img th:src="${product.imageUrl} ?: '/default-image.jpg'" th:alt="${product.name}">
-                        <p><strong>Tên:</strong> <span th:text="${product.name} ?: 'Chưa đặt tên'"></span></p>
-                        <p><strong>Mô tả:</strong> <span th:text="${product.description} ?: 'Chưa có mô tả'"></span></p>
-                        <p><strong>Giá khởi điểm:</strong> <span th:text="${#numbers.formatInteger(product.startingPrice, 0, 'COMMA')} + ' đ'"></span></p>
-                        <p><strong>Bước giá:</strong> <span th:text="${#numbers.formatInteger(product.minimumBidIncrement, 0, 'COMMA')} + ' đ'"></span></p>
-                        <p><strong>Giờ bắt đầu:</strong> <span th:text="${#temporals.format(product.startTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
-                        <p><strong>Giờ kết thúc:</strong> <span th:text="${#temporals.format(product.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
-                        <p><strong>Trạng thái:</strong> <span th:class="'status-badge ' + ${#strings.toLowerCase(product.status)}" th:text="${product.status} ?: 'Chưa xác định'"></span></p>
+                    <div class="cart-item-price">
+                        <span class="label">Bước giá tối thiểu:</span>
+                        <span th:text="${#numbers.formatInteger(product.minimumBidIncrement, 0, 'COMMA')} + ' đ'"></span>
+                    </div>
+                    <div class="cart-item-price">
+                        <span class="label">Giá hiện tại:</span>
+                        <span th:text="${product.currentPrice != null} ? ${#numbers.formatInteger(product.currentPrice, 0, 'COMMA')} + ' đ' : ${#numbers.formatInteger(product.startingPrice, 0, 'COMMA')} + ' đ'"></span>
                     </div>
                 </div>
             </div>
         </div>
-        <a th:href="@{/}" class="back-btn">Quay lại</a>
     </div>
 </body>
 </html>

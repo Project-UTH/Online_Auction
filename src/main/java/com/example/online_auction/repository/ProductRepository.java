@@ -22,4 +22,5 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
                                          @Param("id") Long id,
                                          @Param("startTime") LocalTime startTime,
                                          @Param("endTime") LocalTime endTime);
+List<Product> findByWinnerUsernameAndStatus(String username, Product.Status status);
 }

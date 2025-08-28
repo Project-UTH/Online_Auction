@@ -7,6 +7,377 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link th:href="@{/css/style.css}" rel="stylesheet">
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.75rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1.5rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 0.75rem;
+        }
+
+        .btn {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline {
+            border: 2px solid #667eea;
+            color: #667eea;
+            background: transparent;
+        }
+
+        .btn-outline:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .user-info {
+            color: #333;
+            font-weight: 500;
+            font-size: 0.9rem;
+        }
+
+        .container {
+            flex: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 16px 20px;
+        }
+
+        .hero {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .hero .title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #ff7e5f, #feb47b);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero .subtitle {
+            font-size: 1rem;
+            color: rgba(255, 255, 255, 0.9);
+            font-weight: 400;
+            line-height: 1.4;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .action-container h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .auction-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 0.75rem;
+            width: 100%;
+        }
+
+        .auction-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 0.75rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .admin-button {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+            border-radius: 6px;
+            min-width: auto;
+        }
+
+        .countdown-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            text-align: center;
+        }
+
+        .countdown-section h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-timer {
+            display: flex;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .countdown-item {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 0.5rem;
+            text-align: center;
+            min-width: 60px;
+        }
+
+        .countdown-number {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .countdown-label {
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+        }
+
+        .next-auction {
+            text-align: center;
+            color: #666;
+            font-size: 0.85rem;
+            margin-top: 0.5rem;
+        }
+
+        .next-auction-highlight {
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .calendar-section {
+            grid-column: 1 / -1;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 8px;
+            padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .calendar-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .calendar-subtitle {
+            color: #666;
+            font-size: 0.85rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .nav-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .calendar-month {
+            font-weight: 600;
+            color: #333;
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .calendar-grid {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 0.75rem;
+        }
+
+        .calendar-grid th {
+            padding: 0.75rem 0.25rem;
+            text-align: center;
+            font-weight: 600;
+            color: #666;
+            font-size: 0.8rem;
+        }
+
+        .calendar-grid td {
+            padding: 0.25rem;
+            text-align: center;
+        }
+
+        .date-cell {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 6px;
+            margin: 2px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .date-cell:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .date-cell.today {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            font-weight: 700;
+        }
+
+        .date-cell.selected {
+            background: rgba(102, 126, 234, 0.2);
+            color: #667eea;
+            font-weight: 600;
+        }
+
+        .date-cell.other-month {
+            color: #ccc;
+            cursor: default;
+        }
+
+        .date-cell.other-month:hover {
+            background: transparent;
+        }
+
         .modal {
             display: none;
             position: fixed;
@@ -16,33 +387,117 @@
             height: 100%;
             background-color: rgba(0, 0, 0, 0.5);
             z-index: 1000;
+            backdrop-filter: blur(4px);
         }
+
         .modal-content {
-            background-color: white;
-            margin: 15% auto;
-            padding: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            margin: 5% auto;
+            padding: 1.5rem;
             border-radius: 8px;
-            width: 80%;
-            max-width: 500px;
-            max-height: 70vh;
+            width: 90%;
+            max-width: 400px;
+            max-height: 60vh;
             overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
+
         .modal-close {
             float: right;
             cursor: pointer;
-            font-size: 20px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+            line-height: 1;
         }
+
+        .modal-close:hover {
+            color: #764ba2;
+        }
+
+        .modal h2 {
+            color: #333;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            clear: both;
+        }
+
         .auction-item {
-            padding: 10px;
-            border-bottom: 1px solid #e2e8f0;
-            margin-bottom: 10px;
+            padding: 0.75rem;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.5);
         }
+
+        .auction-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+        }
+
         .auction-item a {
-            color: #3b82f6;
+            color: #667eea;
             text-decoration: none;
+            font-weight: 500;
         }
+
         .auction-item a:hover {
             text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hero .title {
+                font-size: 2rem;
+            }
+
+            .hero .subtitle {
+                font-size: 0.9rem;
+            }
+
+            .countdown-timer {
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }
+
+            .countdown-item {
+                min-width: 50px;
+            }
+
+            .header-content {
+                padding: 0 1rem;
+            }
+
+            .container {
+                padding: 20px 12px;
+            }
+
+            .card {
+                padding: 1rem;
+            }
+
+            .admin-buttons {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .countdown-item {
+                padding: 0.5rem;
+            }
+
+            .countdown-number {
+                font-size: 1rem;
+            }
+
+            .countdown-label {
+                font-size: 0.6rem;
+            }
         }
     </style>
 </head>
@@ -55,6 +510,7 @@
             <nav class="nav-links">
                 <a th:href="@{/}">Trang chủ</a>
                 <a th:href="@{/calendar}">Lịch</a>
+                <a th:if="${session.jwtToken != null && session.role == 'USER'}" th:href="@{/cart}">Giỏ hàng</a>
                 <a th:href="@{/login}" th:if="${session.jwtToken == null}">Đăng nhập</a>
                 <a th:href="@{/logout}" th:unless="${session.jwtToken == null}">Đăng xuất</a>
             </nav>
@@ -63,7 +519,7 @@
                 <a th:href="@{/register}" class="btn btn-primary">Đăng ký</a>
             </div>
             <div th:if="${session.jwtToken != null}" class="user-info">
-                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName)}"></span>
+                <span th:text="'Chào, ' + ${#strings.capitalize(session.displayName ?: session.username)}"></span>
             </div>
         </div>
     </header>
@@ -73,68 +529,72 @@
             <h1 class="title">HammerX</h1>
             <p class="subtitle">Hệ thống đấu giá trực tuyến.<br>Chốt giá nhanh – Rinh ngay không buồn!</p>
         </div>
-        <div class="action-container" th:if="${session.jwtToken != null}">
-            <button class="auction-btn" onclick="startAuction()">Bắt đầu đấu giá</button>
-            <p class="fee-info">Phí đấu giá bắt đầu từ: HHD hmm/s</p>
-            <a th:if="${session.role == 'ADMIN'}" th:href="@{/admin/create-auction}" class="btn btn-primary admin-button">Tạo phiên đấu giá</a>
-            <a th:if="${session.role == 'ADMIN'}" th:href="@{/auction-list}" class="btn btn-primary admin-button">Danh sách các phiên đấu giá</a>
-        </div>
-        <div class="countdown-section">
-            <div class="countdown-title">Phiên đấu giá tiếp theo</div>
-            <div class="countdown-timer">
-                <div class="countdown-item">
-                    <span class="countdown-number" id="days">00</span>
-                    <div class="countdown-label">Ngày</div>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="hours">00</span>
-                    <div class="countdown-label">Giờ</div>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="minutes">00</span>
-                    <div class="countdown-label">Phút</div>
-                </div>
-                <div class="countdown-item">
-                    <span class="countdown-number" id="seconds">00</span>
-                    <div class="countdown-label">Giây</div>
+
+        <div class="main-content">
+            <div class="card action-container" th:if="${session.jwtToken != null and session.role != 'ADMIN'}">
+                <h3>Tham gia đấu giá</h3>
+                <button class="auction-btn" onclick="startAuction()">Bắt đầu đấu giá</button>
+            </div>
+            <div class="card action-container" th:if="${session.jwtToken != null and session.role == 'ADMIN'}">
+                <h3>Quản lý đấu giá</h3>
+                <div class="admin-buttons">
+                    <a th:href="@{/admin/create-auction}" class="btn btn-primary admin-button">Tạo phiên đấu giá</a>
+                    <a th:href="@{/auction-list}" class="btn btn-primary admin-button">Danh sách phiên đấu giá</a>
                 </div>
             </div>
-            <div class="next-auction">
-                Bắt đầu lúc <span class="next-auction-highlight" id="next-auction-time">Chưa có phiên đấu giá</span>
-            </div>
-        </div>
-        <div class="calendar-section">
-            <div class="calendar-header">
-                <div>
-                    <div class="calendar-title">Lịch đấu giá</div>
-                    <div class="calendar-subtitle">Sự kiện hôm</div>
+
+            <div class="card countdown-section">
+                <h3>Phiên đấu giá tiếp theo</h3>
+                <div class="countdown-timer">
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="days">00</span>
+                        <span class="countdown-label">Ngày</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="hours">00</span>
+                        <span class="countdown-label">Giờ</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="minutes">00</span>
+                        <span class="countdown-label">Phút</span>
+                    </div>
+                    <div class="countdown-item">
+                        <span class="countdown-number" id="seconds">00</span>
+                        <span class="countdown-label">Giây</span>
+                    </div>
                 </div>
-                <div class="calendar-nav">
-                    <button class="nav-btn" onclick="prevMonth()">‹</button>
-                    <div class="calendar-month" id="calendar-month">Tháng 8 2025</div>
-                    <button class="nav-btn" onclick="nextMonth()">›</button>
-                </div>
+                <div class="next-auction" id="next-auction-time">Chưa có phiên đấu giá tiếp theo</div>
             </div>
-            <table class="calendar-grid" id="calendar-grid">
-                <thead>
-                    <tr>
-                        <th>S</th>
-                        <th>M</th>
-                        <th>T</th>
-                        <th>W</th>
-                        <th>T</th>
-                        <th>F</th>
-                        <th>S</th>
-                    </tr>
-                </thead>
-                <tbody id="calendar-body"></tbody>
-            </table>
-            <div class="end-time" id="calendar-end-time">8:00 AM</div>
+
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <div>
+                        <div class="calendar-title">Lịch đấu giá</div>
+                        <div class="calendar-subtitle">Sự kiện hôm nay</div>
+                    </div>
+                    <div class="calendar-nav">
+                        <button class="nav-btn" onclick="prevMonth()">‹</button>
+                        <div class="calendar-month" id="calendar-month">Tháng 8 2025</div>
+                        <button class="nav-btn" onclick="nextMonth()">›</button>
+                    </div>
+                </div>
+                <table class="calendar-grid" id="calendar-grid">
+                    <thead>
+                        <tr>
+                            <th>CN</th>
+                            <th>T2</th>
+                            <th>T3</th>
+                            <th>T4</th>
+                            <th>T5</th>
+                            <th>T6</th>
+                            <th>T7</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body"></tbody>
+                </table>
+            </div>
         </div>
     </div>
-    <div th:if="${script}" th:utext="${script}"></div>
-
-    <div th:replace="~{footer}"></div>
 
     <div id="auctionModal" class="modal">
         <div class="modal-content">
@@ -144,8 +604,11 @@
         </div>
     </div>
 
+    <div th:replace="~{footer :: footer}"></div>
+
     <script th:inline="javascript">
-        let currentDate = new Date('2025-08-25T20:53:00+07:00'); // Cập nhật thời gian hiện tại: 08:53 PM, 25/08/2025
+        // Use current date and time: 11:01 AM, August 28, 2025
+        let currentDate = new Date('2025-08-28T11:01:00+07:00');
         let currentMonth = currentDate.getMonth();
         let currentYear = currentDate.getFullYear();
 
@@ -155,6 +618,7 @@
                 sessionStorage.setItem('jwtToken', jwtToken);
             }
             generateCalendar(currentMonth, currentYear);
+            updateCountdown();
         };
 
         // Hàm tạo lịch động
@@ -182,8 +646,8 @@
                 return response.json();
             })
             .then(dates => {
-                console.log('Auction dates from API:', dates); // Debug log
-                const auctionDates = dates.map(date => date); // Giữ định dạng YYYY-MM-DD
+                console.log('Auction dates from API:', dates);
+                const auctionDates = dates.map(date => date);
 
                 let calendarHTML = '';
                 let date = 1;
@@ -221,8 +685,6 @@
                     calendarHTML += row + '</tr>';
                 }
                 calendarBody.innerHTML = calendarHTML;
-
-                updateCountdown();
             })
             .catch(error => {
                 console.error('Error fetching auction dates:', error);
@@ -236,9 +698,10 @@
                     if (date > daysInMonth) {
                         row += '<td><div class="date-cell other-month"></div></td>';
                     } else {
+                        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                         const isToday = currentMonthYear && date === today;
                         const classes = `date-cell${isToday ? ' today' : ''}`;
-                        row += `<td><div class="${classes}" onclick="showAuctions('${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}')">${date}</div></td>`;
+                        row += `<td><div class="${classes}" onclick="showAuctions('${dateStr}')">${date}</div></td>`;
                         date++;
                     }
                 }
@@ -249,9 +712,10 @@
                         if (date > daysInMonth) {
                             row += '<td><div class="date-cell other-month"></div></td>';
                         } else {
+                            const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                             const isToday = currentMonthYear && date === today;
                             const classes = `date-cell${isToday ? ' today' : ''}`;
-                            row += `<td><div class="${classes}" onclick="showAuctions('${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}')">${date}</div></td>`;
+                            row += `<td><div class="${classes}" onclick="showAuctions('${dateStr}')">${date}</div></td>`;
                             date++;
                         }
                     }
@@ -261,9 +725,8 @@
             });
         }
 
-        // Hàm hiển thị danh sách phiên đấu giá
         function showAuctions(dateStr) {
-            console.log('Fetching auctions for date:', dateStr); // Debug log
+            console.log('Fetching auctions for date:', dateStr);
             fetch(`/admin/api/auctions/by-date?date=${encodeURIComponent(dateStr)}`, {
                 headers: {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
@@ -281,16 +744,16 @@
                 });
             })
             .then(auctions => {
-                console.log('Auctions fetched:', auctions); // Debug log
+                console.log('Auctions fetched:', auctions);
                 const auctionList = document.getElementById('auctionList');
                 auctionList.innerHTML = '';
                 if (auctions.length > 0) {
                     auctions.forEach(auction => {
                         const item = document.createElement('div');
                         item.className = 'auction-item';
-                        const role = /*[[${session.role}]]*/ 'USER'; // Lấy vai trò từ session
+                        const role = /*[[${session.role}]]*/ 'USER';
                         const detailUrl = role === 'ADMIN' ? `/admin/edit-auction/${auction.id}` : `/admin/view-auction/${auction.id}`;
-                        item.innerHTML = `<strong>${auction.name || 'Chưa có tên'}</strong> (Trạng thái: ${auction.status || 'Chưa xác định'})<br>
+                        item.innerHTML = `<strong>${auction.name || 'Chưa có tên'}</strong> (Trạng thái: <span class="status-badge ${auction.status ? auction.status.toLowerCase() : ''}">${auction.status || 'Chưa xác định'}</span>)<br>
                             <a href="${detailUrl}" target="_blank">Xem chi tiết</a>`;
                         auctionList.appendChild(item);
                     });
@@ -306,14 +769,12 @@
             });
         }
 
-        // Hàm đóng modal
         function closeModal() {
             document.getElementById('auctionModal').style.display = 'none';
         }
 
-        // Hàm cập nhật bộ đếm ngược
         function updateCountdown() {
-            const now = new Date('2025-08-25T20:53:00+07:00');
+            const now = new Date('2025-08-28T11:01:00+07:00');
             fetch('/admin/api/auctions', {
                 headers: {
                     'Authorization': 'Bearer ' + sessionStorage.getItem('jwtToken')
@@ -365,7 +826,6 @@
             .catch(error => console.error('Error fetching auctions:', error));
         }
 
-        // Hàm chuyển tháng trước
         function prevMonth() {
             currentMonth--;
             if (currentMonth < 0) {
@@ -375,7 +835,6 @@
             generateCalendar(currentMonth, currentYear);
         }
 
-        // Hàm chuyển tháng sau
         function nextMonth() {
             currentMonth++;
             if (currentMonth > 11) {
@@ -385,9 +844,8 @@
             generateCalendar(currentMonth, currentYear);
         }
 
-        // Hàm bắt đầu đấu giá (giả lập)
         function startAuction() {
-            window.location.href = '/user/auction-room'; // Chuyển đến trang danh sách phiên đấu giá
+            window.location.href = '/user/auction-room';
         }
     </script>
 </body>
