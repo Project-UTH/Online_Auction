@@ -253,7 +253,7 @@ public class BidService {
         return products;
     }
 
-    @Scheduled(fixedRate = 60000)
+    @Scheduled(fixedRate = 5000)
     @Transactional
     public void checkAuctionEnd() {
         List<Auction> activeAuctions = auctionRepository.findAllWithProducts().stream()

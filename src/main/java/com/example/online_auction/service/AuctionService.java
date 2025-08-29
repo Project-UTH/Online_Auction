@@ -54,7 +54,7 @@ public class AuctionService {
         return auctionRepository.save(auction);
     }
 
-    @Scheduled(fixedRate = 30000) // Chạy mỗi 30 giây
+    @Scheduled(fixedRate = 5000) // Chạy mỗi 30 giây
     @Transactional
     public void updateAllAuctionStatuses() {
         List<Auction> auctions = auctionRepository.findAll();
@@ -101,7 +101,7 @@ public class AuctionService {
             List<Auction> auctions = auctionRepository.findByAuctionDate(date);
             System.out.println("Raw auctions found for date " + date + ": " + auctions); // Debug log
             return auctions.stream()
-                    .filter(auction -> auction.getStatus() == Auction.Status.PENDING || auction.getStatus() == Auction.Status.ACTIVE)
+                    .filter(auction -> auction.getStatus() == Auction.Status.PENDING || auction.getStatus() == Auction.Status.ACTIVE || auction.getStatus() == Auction.Status.COMPLETED)
                     .toList();
         } catch (Exception e) {
             System.err.println("Error in getAuctionsByDate: " + e.getMessage());

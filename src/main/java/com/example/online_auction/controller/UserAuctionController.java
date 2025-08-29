@@ -53,7 +53,7 @@ public class UserAuctionController {
             return "redirect:/admin/auction-list";
         }
         List<Auction> auctions = auctionService.getAllAuctions().stream()
-                .filter(auction -> auction.getStatus() == Auction.Status.ACTIVE || auction.getStatus() == Auction.Status.PENDING)
+                .filter(auction -> auction.getStatus() == Auction.Status.ACTIVE || auction.getStatus() == Auction.Status.PENDING || auction.getStatus() == Auction.Status.COMPLETED)
                 .collect(Collectors.toList());
         model.addAttribute("auctions", auctions);
         return "user/auction-room";

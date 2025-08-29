@@ -284,80 +284,59 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification('error', `Lỗi kết nối: ${error.message || error}`);
     });
 
-    socket.on('bidError', (error) => {
-        console.error('❌ Bid error:', error);
-        showNotification('error', `Lỗi đặt giá: ${error}`);
-    });
-
-    socket.on('bidAck', (response) => {
-        console.log('Ack from server:', response, 'Type:', typeof response, 'Stringified:', JSON.stringify(response));
-        let message = response;
-        if (typeof response === 'object' && response.message) {
-            message = response.message;
-        }
-        message = (message || '').trim();
-        if (message.toLowerCase() === 'bid placed successfully') {
-            showNotification('success', 'Đặt giá thành công!');
-            const userBidCount = document.getElementById('userBidCount');
-            if (userBidCount) {
-                const currentCount = parseInt(userBidCount.textContent) || 0;
-                userBidCount.textContent = `${currentCount + 1} lượt đấu giá`;
-            }
-        } else {
-            showNotification('error', `Lỗi đặt giá: ${message}`);
-        }
-    });
 
     function startCountdown(endTime) {
-        console.log('⏰ Starting countdown timer');
-        const countdownElements = {
-            days: document.getElementById('countdown-days'),
-            hours: document.getElementById('countdown-hours'),
-            minutes: document.getElementById('countdown-minutes'),
-            seconds: document.getElementById('countdown-seconds')
-        };
+    console.log('⏰ Starting countdown timer');
+    const countdownElements = {
+        days: document.getElementById('countdown-days'),
+        hours: document.getElementById('countdown-hours'),
+        minutes: document.getElementById('countdown-minutes'),
+        seconds: document.getElementById('countdown-seconds')
+    };
+    
+    const missingElements = Object.entries(countdownElements)
+        .filter(([key, element]) => !element)
+        .map(([key]) => key);
+    if (missingElements.length > 0) {
+        console.error('❌ Missing countdown elements:', missingElements);
+        return;
+    }
 
-        const missingElements = Object.entries(countdownElements)
-            .filter(([key, element]) => !element)
-            .map(([key]) => key);
+    // Xóa bộ đếm thời gian hiện tại nếu tồn tại
+    if (window.countdownInterval) {
+        clearInterval(window.countdownInterval);
+    }
 
-        if (missingElements.length > 0) {
-            console.error('❌ Missing countdown elements:', missingElements);
+    const countdown = () => {
+        const now = new Date();
+        const diff = endTime - now;
+        if (diff <= 0) {
+            console.log('⏰ Auction ended');
+            Object.values(countdownElements).forEach(el => el.textContent = '00');
+            showNotification('info', 'Phiên đấu giá đã kết thúc!');
+            document.getElementById('auctionEndedBanner').style.display = 'block';
+            bidButtons.forEach(button => {
+                button.disabled = true;
+                button.querySelector('.btn-text').textContent = 'Đã kết thúc';
+                button.style.background = '#95a5a6';
+            });
+            clearInterval(window.countdownInterval); // Xóa bộ đếm khi phiên đấu giá kết thúc
             return;
         }
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+        countdownElements.days.textContent = String(days).padStart(2, '0');
+        countdownElements.hours.textContent = String(hours).padStart(2, '0');
+        countdownElements.minutes.textContent = String(minutes).padStart(2, '0');
+        countdownElements.seconds.textContent = String(seconds).padStart(2, '0');
+    };
 
-        const countdown = () => {
-            const now = new Date();
-            const diff = endTime - now;
-
-            if (diff <= 0) {
-                console.log('⏰ Auction ended');
-                Object.values(countdownElements).forEach(el => el.textContent = '00');
-                showNotification('info', 'Phiên đấu giá đã kết thúc!');
-                document.getElementById('auctionEndedBanner').style.display = 'block';
-                bidButtons.forEach(button => {
-                    button.disabled = true;
-                    button.querySelector('.btn-text').textContent = 'Đã kết thúc';
-                    button.style.background = '#95a5a6';
-                });
-                return;
-            }
-
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
-
-            countdownElements.days.textContent = String(days).padStart(2, '0');
-            countdownElements.hours.textContent = String(hours).padStart(2, '0');
-            countdownElements.minutes.textContent = String(minutes).padStart(2, '0');
-            countdownElements.seconds.textContent = String(seconds).padStart(2, '0');
-        };
-
-        countdown();
-        const interval = setInterval(countdown, 1000);
-        window.addEventListener('beforeunload', () => clearInterval(interval));
-    }
+    countdown();
+    window.countdownInterval = setInterval(countdown, 1000);
+    window.addEventListener('beforeunload', () => clearInterval(window.countdownInterval));
+}
 
     // Xử lý bid buttons
     bidButtons.forEach(button => {
@@ -412,8 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
                         const currentCount = parseInt(userBidCount.textContent) || 0;
                         userBidCount.textContent = `${currentCount + 1} lượt đấu giá`;
                     }
-                } else {
-                    showNotification('error', `Lỗi đặt giá: ${message}`);
                 }
             });
 

@@ -36,7 +36,7 @@ public class ProductService {
     private RedisTemplate<String, Object> redisTemplate; // Add RedisTemplate
 
     @Transactional
-    @Scheduled(fixedRate = 30000) // Chạy mỗi 30 giây
+    @Scheduled(fixedRate = 5000) // Chạy mỗi 30 giây
     public void updateAllProductStatuses() {
         List<Product> products = productRepository.findAll();
         products.forEach(this::updateProductStatus);

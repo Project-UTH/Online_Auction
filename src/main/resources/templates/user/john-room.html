@@ -334,6 +334,29 @@
             margin-bottom: 0.25rem;
         }
 
+        .countdown-section {
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.countdown-display {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333;
+}
+
+.countdown-display span {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 0.5rem;
+    min-width: 40px;
+    text-align: center;
+}
+
         .winner-name, .winning-amount {
             font-size: 0.9rem;
         }
@@ -653,13 +676,22 @@
 
         <!-- Auction Info Header -->
         <div class="auction-header">
-            <h1 class="title" th:text="${auction.name} ?: 'Phiên Đấu Giá'"></h1>
-            <div class="auction-meta">
-                <p>📅 Ngày: <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
-                <p>⏰ Thời gian: <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
-                <p>📊 Trạng thái: <span th:class="'status-badge ' + ${#strings.toLowerCase(auction.status)}" th:text="${auction.status} ?: 'Chưa xác định'"></span></p>
-            </div>
+    <h1 class="title" th:text="${auction.name} ?: 'Phiên Đấu Giá'"></h1>
+    <div class="auction-meta">
+        <p>📅 Ngày: <span th:text="${#temporals.format(auction.auctionDate, 'dd/MM/yyyy')} ?: 'Chưa thiết lập'"></span></p>
+        <p>⏰ Thời gian: <span th:text="${#temporals.format(auction.startTime, 'HH:mm')} + ' - ' + ${#temporals.format(auction.endTime, 'HH:mm')} ?: 'Chưa thiết lập'"></span></p>
+        <p>📊 Trạng thái: <span th:class="'status-badge ' + ${#strings.toLowerCase(auction.status)}" th:text="${auction.status} ?: 'Chưa xác định'"></span></p>
+    </div>
+    <div class="countdown-section">
+        <h3>Thời gian còn lại</h3>
+        <div class="countdown-display">
+            <span id="countdown-days">00</span> ngày
+            <span id="countdown-hours">00</span> giờ
+            <span id="countdown-minutes">00</span> phút
+            <span id="countdown-seconds">00</span> giây
         </div>
+    </div>
+</div>
 
         <input type="hidden" id="auctionId" th:value="${auction.id}" />
 
